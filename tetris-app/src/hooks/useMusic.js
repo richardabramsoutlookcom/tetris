@@ -26,7 +26,7 @@ class MusicEngine {
       this.masterGain.connect(this.audioContext.destination);
       this.masterGain.gain.value = 0.2; // Lower than SFX
       this.initialized = true;
-    } catch (e) {
+    } catch {
       console.warn('Web Audio API not supported');
     }
   }
@@ -196,7 +196,7 @@ class MusicEngine {
           node.gainNode.gain.cancelScheduledValues(currentTime);
           node.gainNode.gain.setValueAtTime(0, currentTime);
         }
-      } catch (e) {
+      } catch {
         // Node may have already stopped
       }
     });
@@ -208,8 +208,37 @@ class MusicEngine {
 // Singleton instance
 const musicEngine = new MusicEngine();
 
+// localStorage key for track preference
+const STORAGE_KEY = 'tetris-music-track';
+
+// Helper to load saved track preference
+function loadSavedTrack() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved && ['A', 'B', 'C'].includes(saved)) {
+      return saved;
+    }
+  } catch {
+    console.warn('Failed to load music track from storage');
+  }
+  return 'A'; // Default to Type A
+}
+
+// Helper to save track preference
+function saveTrack(track) {
+  try {
+    if (track) {
+      localStorage.setItem(STORAGE_KEY, track);
+    } else {
+      localStorage.removeItem(STORAGE_KEY);
+    }
+  } catch {
+    console.warn('Failed to save music track to storage');
+  }
+}
+
 export function useMusic() {
-  const [currentTrack, setCurrentTrack] = useState(null);
+  const [currentTrack, setCurrentTrackState] = useState(() => loadSavedTrack());
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolumeState] = useState(0.2);
   const initialized = useRef(false);
@@ -248,7 +277,8 @@ export function useMusic() {
   }, []);
 
   const setTrack = useCallback((track) => {
-    setCurrentTrack(track);
+    setCurrentTrackState(track);
+    saveTrack(track);
     if (track && isPlaying) {
       musicEngine.play(track);
     } else if (!track) {
