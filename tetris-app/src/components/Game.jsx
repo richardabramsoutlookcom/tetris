@@ -1,5 +1,6 @@
-import { useEffect, useCallback, useState } from 'react';
+import { useEffect, useCallback, useState, useRef } from 'react';
 import { useSound } from '../hooks/useSound';
+import { useMusic } from '../hooks/useMusic';
 import { useGameLogic } from '../hooks/useGameLogic';
 import { useKeyBindings } from '../hooks/useKeyBindings';
 import { useHighScores } from '../hooks/useHighScores';
@@ -9,6 +10,7 @@ import { NextPiece } from './NextPiece';
 import { HoldPiece } from './HoldPiece';
 import { ScorePanel } from './ScorePanel';
 import { Controls } from './Controls';
+import { MusicSelector } from './MusicSelector';
 import { KeyBindings } from './KeyBindings';
 import { HighScoreEntry } from './HighScoreEntry';
 import { Leaderboard } from './Leaderboard';
@@ -16,11 +18,14 @@ import './Game.css';
 
 export function Game() {
   const sound = useSound();
+  const music = useMusic();
   const [showSettings, setShowSettings] = useState(false);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [lastSubmittedScore, setLastSubmittedScore] = useState(null);
   // Track if user has dismissed or submitted the high score entry for this game
   const [highScoreHandled, setHighScoreHandled] = useState(false);
+  // Track previous game state to detect transitions
+  const prevGameStateRef = useRef({ isPlaying: false, isPaused: false, gameOver: false });
 
   const {
     bindings,
@@ -164,6 +169,39 @@ export function Game() {
     setShowSettings(true);
   };
 
+  // Sync music with game state
+  useEffect(() => {
+    const prev = prevGameStateRef.current;
+
+    // Game started (transitioned from not playing to playing)
+    if (isPlaying && !prev.isPlaying && !isPaused && !gameOver) {
+      music.play();
+    }
+
+    // Game paused
+    if (isPaused && !prev.isPaused && isPlaying) {
+      music.pause();
+    }
+
+    // Game resumed (unpaused)
+    if (!isPaused && prev.isPaused && isPlaying && !gameOver) {
+      music.play();
+    }
+
+    // Game over
+    if (gameOver && !prev.gameOver) {
+      music.stop();
+    }
+
+    // Game stopped (was playing, now not playing and not game over - e.g., reset)
+    if (!isPlaying && prev.isPlaying && !gameOver) {
+      music.stop();
+    }
+
+    // Update previous state ref
+    prevGameStateRef.current = { isPlaying, isPaused, gameOver };
+  }, [isPlaying, isPaused, gameOver, music]);
+
   return (
     <div className="game-container">
       <Starfield />
@@ -228,8 +266,12 @@ export function Game() {
           <div className="right-panel">
             <NextPiece piece={nextPiece} />
             <Controls bindings={bindings} />
+            <MusicSelector
+              currentTrack={music.currentTrack}
+              onTrackChange={music.setTrack}
+            />
             <button className="settings-button" onClick={openSettings}>
-              ⚙ Key Bindings
+              Settings
             </button>
           </div>
         </div>
