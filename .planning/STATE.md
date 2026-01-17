@@ -5,33 +5,34 @@
 See: .planning/PROJECT.md (updated 2026-01-17)
 
 **Core value:** Classic Tetris gameplay that feels good to play — responsive controls, satisfying feedback, and the option to experience it in authentic Gameboy style.
-**Current focus:** Phase 1 — High Scores
+**Current focus:** Phase 2 — Gameboy Music
 
 ## Current Position
 
-Phase: 1 of 4 (High Scores)
-Plan: 1 of 1 in current phase
-Status: Phase complete
-Last activity: 2026-01-17 — Completed 01-01-PLAN.md
+Phase: 2 of 4 (Gameboy Music)
+Plan: 1 of 2 in current phase
+Status: In progress
+Last activity: 2026-01-17 — Completed 02-01-PLAN.md
 
-Progress: ██░░░░░░░░ 25%
+Progress: ████░░░░░░ 40%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
-- Average duration: 5 min
-- Total execution time: 5 min
+- Total plans completed: 2
+- Average duration: 4 min
+- Total execution time: 8 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1 | 1 | 5 min | 5 min |
+| 2 | 1 | 3 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (5 min)
-- Trend: —
+- Last 5 plans: 01-01 (5 min), 02-01 (3 min)
+- Trend: Improving
 
 ## Accumulated Context
 
@@ -44,6 +45,9 @@ Recent decisions affecting current work:
 |-------|----------|-----------|
 | 01-01 | Derived state pattern for modal visibility | Avoids useEffect setState lint errors, cleaner code |
 | 01-01 | Gold accent (#ffd700) for high score modal | Visual distinction from standard blue game UI |
+| 02-01 | Square wave oscillator for music | Authentic 8-bit Gameboy sound character |
+| 02-01 | Lookahead scheduling pattern | Prevents audio glitches in continuous playback |
+| 02-01 | Korobeiniki (Type A) as default | Iconic Tetris theme most users expect |
 
 ### Pending Todos
 
@@ -56,5 +60,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-17
-Stopped at: Completed 01-01-PLAN.md
+Stopped at: Completed 02-01-PLAN.md
 Resume file: None
