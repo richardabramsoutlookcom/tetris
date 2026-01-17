@@ -1,0 +1,55 @@
+.music-selector {
+  background: linear-gradient(135deg, rgba(100, 100, 150, 0.2), rgba(50, 50, 80, 0.2));
+  border: 2px solid rgba(150, 150, 200, 0.4);
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 0 20px rgba(100, 100, 200, 0.2), inset 0 0 15px rgba(0, 0, 0, 0.3);
+}
+
+.music-selector h3 {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  letter-spacing: 3px;
+  color: #88f;
+  text-shadow: 0 0 10px #88f;
+  text-align: center;
+}
+
+.music-track-buttons {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+
+.music-track-btn {
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: bold;
+  color: rgba(200, 200, 255, 0.8);
+  background: rgba(60, 60, 100, 0.3);
+  border: 1px solid rgba(100, 100, 150, 0.4);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  min-width: 28px;
+}
+
+.music-track-btn:hover:not(:disabled) {
+  color: #fff;
+  background: rgba(80, 80, 130, 0.4);
+  border-color: rgba(150, 150, 200, 0.6);
+  box-shadow: 0 0 10px rgba(100, 100, 200, 0.3);
+}
+
+.music-track-btn.active {
+  color: #fff;
+  background: linear-gradient(135deg, rgba(100, 100, 200, 0.5), rgba(70, 70, 150, 0.5));
+  border-color: rgba(150, 150, 255, 0.7);
+  box-shadow: 0 0 15px rgba(100, 100, 200, 0.4);
+}
+
+.music-track-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
