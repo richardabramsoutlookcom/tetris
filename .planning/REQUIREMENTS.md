@@ -50,9 +50,9 @@ Which phases cover which requirements. Updated by create-roadmap.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SCORE-01 | Phase 1 | Pending |
-| SCORE-02 | Phase 1 | Pending |
-| SCORE-03 | Phase 1 | Pending |
+| SCORE-01 | Phase 1 | Complete |
+| SCORE-02 | Phase 1 | Complete |
+| SCORE-03 | Phase 1 | Complete |
 | AUDIO-01 | Phase 2 | Pending |
 | AUDIO-02 | Phase 2 | Pending |
 | AUDIO-03 | Phase 2 | Pending |
