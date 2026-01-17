@@ -1,0 +1,130 @@
+.highscore-entry-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 20, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  backdrop-filter: blur(5px);
+}
+
+.highscore-entry-modal {
+  background: linear-gradient(135deg, rgba(30, 30, 60, 0.95), rgba(20, 20, 40, 0.95));
+  border: 2px solid rgba(255, 215, 0, 0.5);
+  border-radius: 12px;
+  padding: 40px;
+  min-width: 320px;
+  text-align: center;
+  box-shadow: 0 0 60px rgba(255, 215, 0, 0.3), inset 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+.highscore-entry-modal h2 {
+  margin: 0 0 20px 0;
+  font-size: 28px;
+  letter-spacing: 4px;
+  color: #ffd700;
+  text-shadow: 0 0 20px #ffd700, 0 0 40px #ffa500;
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    text-shadow: 0 0 20px #ffd700, 0 0 40px #ffa500;
+  }
+  50% {
+    text-shadow: 0 0 30px #ffd700, 0 0 60px #ffa500, 0 0 80px #ff8c00;
+  }
+}
+
+.score-display {
+  font-size: 48px;
+  font-weight: bold;
+  color: #fff;
+  margin: 0 0 25px 0;
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+}
+
+.initials-prompt {
+  font-size: 14px;
+  color: rgba(200, 200, 255, 0.8);
+  margin: 0 0 15px 0;
+  letter-spacing: 2px;
+}
+
+.initials-input {
+  width: 120px;
+  padding: 15px;
+  font-size: 36px;
+  font-weight: bold;
+  text-align: center;
+  letter-spacing: 10px;
+  color: #fff;
+  background: rgba(50, 50, 100, 0.4);
+  border: 2px solid rgba(150, 150, 255, 0.5);
+  border-radius: 8px;
+  outline: none;
+  font-family: inherit;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+}
+
+.initials-input::placeholder {
+  color: rgba(150, 150, 200, 0.4);
+}
+
+.initials-input:focus {
+  border-color: #ffd700;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+.highscore-entry-actions {
+  margin-top: 30px;
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.submit-button,
+.skip-button {
+  padding: 12px 30px;
+  font-size: 14px;
+  letter-spacing: 2px;
+  color: #fff;
+  border: 2px solid;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  font-family: inherit;
+}
+
+.submit-button {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.4), rgba(255, 165, 0, 0.4));
+  border-color: rgba(255, 215, 0, 0.6);
+}
+
+.submit-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.5), rgba(255, 165, 0, 0.5));
+  border-color: rgba(255, 215, 0, 0.8);
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+  transform: scale(1.05);
+}
+
+.submit-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.skip-button {
+  background: linear-gradient(135deg, rgba(100, 100, 150, 0.3), rgba(70, 70, 120, 0.3));
+  border-color: rgba(150, 150, 200, 0.4);
+}
+
+.skip-button:hover {
+  background: linear-gradient(135deg, rgba(120, 120, 170, 0.4), rgba(90, 90, 140, 0.4));
+  border-color: rgba(180, 180, 230, 0.6);
+}
