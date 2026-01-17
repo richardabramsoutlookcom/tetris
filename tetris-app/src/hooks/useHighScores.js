@@ -10,7 +10,7 @@ export function useHighScores() {
       if (saved) {
         return JSON.parse(saved);
       }
-    } catch (e) {
+    } catch {
       console.warn('Failed to load high scores from storage');
     }
     return [];
@@ -20,7 +20,7 @@ export function useHighScores() {
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(highScores));
-    } catch (e) {
+    } catch {
       console.warn('Failed to save high scores to storage');
     }
   }, [highScores]);
