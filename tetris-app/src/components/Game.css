@@ -59,7 +59,7 @@
   width: 140px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 15px;
 }
 
 .game-overlay {
@@ -177,7 +177,9 @@
   .right-panel {
     width: auto;
     flex-direction: row;
-    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
   }
 
   .right-panel {
