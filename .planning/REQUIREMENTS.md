@@ -53,12 +53,12 @@ Which phases cover which requirements. Updated by create-roadmap.
 | SCORE-01 | Phase 1 | Complete |
 | SCORE-02 | Phase 1 | Complete |
 | SCORE-03 | Phase 1 | Complete |
-| AUDIO-01 | Phase 2 | Pending |
-| AUDIO-02 | Phase 2 | Pending |
-| AUDIO-03 | Phase 2 | Pending |
-| AUDIO-04 | Phase 2 | Pending |
-| THEME-01 | Phase 3 | Pending |
-| THEME-02 | Phase 3 | Pending |
+| AUDIO-01 | Phase 2 | Complete |
+| AUDIO-02 | Phase 2 | Complete |
+| AUDIO-03 | Phase 2 | Complete |
+| AUDIO-04 | Phase 2 | Complete |
+| THEME-01 | Phase 3 | Complete |
+| THEME-02 | Phase 3 | Complete |
 | MOBIL-01 | Phase 4 | Pending |
 | MOBIL-02 | Phase 4 | Pending |
 
@@ -69,4 +69,4 @@ Which phases cover which requirements. Updated by create-roadmap.
 
 ---
 *Requirements defined: 2026-01-17*
-*Last updated: 2026-01-17 after roadmap creation*
+*Last updated: 2026-01-18 after Phase 3 completion*

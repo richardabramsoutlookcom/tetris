@@ -11,8 +11,8 @@ Building on an existing React 19 Tetris game with core mechanics already in plac
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
 - [x] **Phase 1: High Scores** - Top 10 leaderboard with localStorage persistence
-- [ ] **Phase 2: Gameboy Music** - Synthesized Type A/B/C soundtracks with selection
-- [ ] **Phase 3: Gameboy Theme** - Green DMG visual mode with toggle
+- [x] **Phase 2: Gameboy Music** - Synthesized Type A/B/C soundtracks with selection
+- [x] **Phase 3: Gameboy Theme** - Green DMG visual mode with toggle
 - [ ] **Phase 4: Mobile Controls** - Touch-based virtual buttons for mobile play
 
 ## Phase Details
@@ -45,7 +45,8 @@ Plans:
 **Plans**: TBD
 
 Plans:
-- [ ] 02-01: TBD during planning
+- [x] 02-01: Music synthesis engine
+- [x] 02-02: Music UI integration
 
 ### Phase 3: Gameboy Theme
 **Goal**: Visual toggle between modern and retro Gameboy aesthetics
@@ -58,7 +59,7 @@ Plans:
 **Plans**: TBD
 
 Plans:
-- [ ] 03-01: TBD during planning
+- [x] 03-01: Gameboy theme implementation
 
 ### Phase 4: Mobile Controls
 **Goal**: Touch controls for mobile gameplay
@@ -82,6 +83,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. High Scores | 1/1 | Complete | 2026-01-17 |
-| 2. Gameboy Music | 0/? | Not started | - |
-| 3. Gameboy Theme | 0/? | Not started | - |
+| 2. Gameboy Music | 2/2 | Complete | 2026-01-17 |
+| 3. Gameboy Theme | 1/1 | Complete | 2026-01-18 |
 | 4. Mobile Controls | 0/? | Not started | - |
