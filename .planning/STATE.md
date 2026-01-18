@@ -53,7 +53,9 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-None.
+1. **Improve music quality with multi-layered synthesis** (audio)
+   - Add 4-channel Gameboy-style architecture
+   - See: `.planning/todos/pending/2026-01-17-improve-music-quality.md`
 
 ### Blockers/Concerns
 
