@@ -1,18 +1,26 @@
 .music-selector {
-  background: linear-gradient(135deg, rgba(100, 100, 150, 0.2), rgba(50, 50, 80, 0.2));
-  border: 2px solid rgba(150, 150, 200, 0.4);
+  background: var(--color-panel-bg);
+  border: 2px solid var(--color-panel-border);
   border-radius: 8px;
   padding: 12px;
   box-shadow: 0 0 20px rgba(100, 100, 200, 0.2), inset 0 0 15px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="gameboy"] .music-selector {
+  box-shadow: none;
 }
 
 .music-selector h3 {
   margin: 0 0 10px 0;
   font-size: 14px;
   letter-spacing: 3px;
-  color: #88f;
-  text-shadow: 0 0 10px #88f;
+  color: var(--color-accent);
+  text-shadow: 0 0 10px var(--color-accent);
   text-align: center;
+}
+
+[data-theme="gameboy"] .music-selector h3 {
+  text-shadow: none;
 }
 
 .music-track-buttons {
@@ -25,9 +33,9 @@
   padding: 6px 10px;
   font-size: 12px;
   font-weight: bold;
-  color: rgba(200, 200, 255, 0.8);
+  color: var(--color-text-muted);
   background: rgba(60, 60, 100, 0.3);
-  border: 1px solid rgba(100, 100, 150, 0.4);
+  border: 1px solid var(--color-panel-border);
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -35,18 +43,31 @@
   min-width: 28px;
 }
 
+[data-theme="gameboy"] .music-track-btn {
+  background: var(--color-board-bg);
+}
+
 .music-track-btn:hover:not(:disabled) {
-  color: #fff;
+  color: var(--color-text);
   background: rgba(80, 80, 130, 0.4);
-  border-color: rgba(150, 150, 200, 0.6);
+  border-color: var(--color-accent);
   box-shadow: 0 0 10px rgba(100, 100, 200, 0.3);
 }
 
+[data-theme="gameboy"] .music-track-btn:hover:not(:disabled) {
+  background: var(--color-button-bg);
+  box-shadow: none;
+}
+
 .music-track-btn.active {
-  color: #fff;
-  background: linear-gradient(135deg, rgba(100, 100, 200, 0.5), rgba(70, 70, 150, 0.5));
-  border-color: rgba(150, 150, 255, 0.7);
+  color: var(--color-text);
+  background: var(--color-button-bg);
+  border-color: var(--color-button-border);
   box-shadow: 0 0 15px rgba(100, 100, 200, 0.4);
+}
+
+[data-theme="gameboy"] .music-track-btn.active {
+  box-shadow: none;
 }
 
 .music-track-btn:disabled {

@@ -4,7 +4,7 @@
   align-items: center;
   justify-content: center;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: white;
+  color: var(--color-text);
   user-select: none;
 }
 
@@ -23,8 +23,8 @@
   font-size: 48px;
   margin: 0;
   letter-spacing: 15px;
-  text-shadow: 0 0 30px #88f, 0 0 60px #44f, 0 0 90px #22f;
-  background: linear-gradient(180deg, #fff 0%, #88f 50%, #44f 100%);
+  text-shadow: 0 0 30px var(--color-accent), 0 0 60px var(--color-accent), 0 0 90px var(--color-accent);
+  background: linear-gradient(180deg, var(--color-text) 0%, var(--color-accent) 50%, var(--color-accent) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -33,9 +33,20 @@
 .game-header .subtitle {
   font-size: 14px;
   letter-spacing: 10px;
-  color: #88f;
+  color: var(--color-accent);
   margin: 5px 0 0 0;
-  text-shadow: 0 0 15px #88f;
+  text-shadow: 0 0 15px var(--color-accent);
+}
+
+/* Gameboy mode: remove glow effects */
+[data-theme="gameboy"] .game-header h1 {
+  text-shadow: none;
+  background: none;
+  -webkit-text-fill-color: var(--color-text);
+}
+
+[data-theme="gameboy"] .game-header .subtitle {
+  text-shadow: none;
 }
 
 .game-layout {
@@ -68,7 +79,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 20, 0.9);
+  background: var(--color-overlay-bg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -88,21 +99,33 @@
   text-shadow: 0 0 20px currentColor;
 }
 
+[data-theme="gameboy"] .overlay-content h2 {
+  text-shadow: none;
+}
+
 .overlay-content.game-over h2 {
   color: #f55;
+}
+
+[data-theme="gameboy"] .overlay-content.game-over h2 {
+  color: var(--color-text);
 }
 
 .overlay-content.paused h2 {
   color: #ff0;
 }
 
+[data-theme="gameboy"] .overlay-content.paused h2 {
+  color: var(--color-text);
+}
+
 .overlay-content.start h2 {
-  color: #88f;
+  color: var(--color-accent);
 }
 
 .overlay-content p {
   margin: 10px 0;
-  color: rgba(200, 200, 255, 0.8);
+  color: var(--color-text-muted);
 }
 
 .overlay-content button {
@@ -110,9 +133,9 @@
   padding: 15px 40px;
   font-size: 18px;
   letter-spacing: 3px;
-  color: white;
-  background: linear-gradient(135deg, rgba(100, 100, 200, 0.5), rgba(50, 50, 150, 0.5));
-  border: 2px solid rgba(150, 150, 255, 0.6);
+  color: var(--color-text);
+  background: var(--color-button-bg);
+  border: 2px solid var(--color-button-border);
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -126,10 +149,18 @@
   transform: scale(1.05);
 }
 
+[data-theme="gameboy"] .overlay-content button:hover {
+  background: #306230;
+  border-color: var(--color-button-border);
+  box-shadow: none;
+  transform: none;
+}
+
 .overlay-content .hint {
   font-size: 12px;
-  color: rgba(150, 150, 200, 0.6);
+  color: var(--color-text-muted);
   margin-top: 15px;
+  opacity: 0.6;
 }
 
 .overlay-content .secondary-button {
@@ -141,18 +172,29 @@
   border-color: rgba(120, 120, 180, 0.5);
 }
 
+[data-theme="gameboy"] .overlay-content .secondary-button {
+  background: var(--color-button-bg);
+  border-color: var(--color-panel-border);
+}
+
 .overlay-content .secondary-button:hover {
   background: linear-gradient(135deg, rgba(100, 100, 150, 0.5), rgba(70, 70, 110, 0.5));
   border-color: rgba(150, 150, 200, 0.7);
   box-shadow: 0 0 15px rgba(100, 100, 180, 0.4);
 }
 
+[data-theme="gameboy"] .overlay-content .secondary-button:hover {
+  background: #306230;
+  border-color: var(--color-button-border);
+  box-shadow: none;
+}
+
 .settings-button {
   padding: 10px 15px;
   font-size: 12px;
-  color: rgba(200, 200, 255, 0.8);
-  background: linear-gradient(135deg, rgba(60, 60, 100, 0.3), rgba(40, 40, 70, 0.3));
-  border: 1px solid rgba(100, 100, 150, 0.4);
+  color: var(--color-text-muted);
+  background: var(--color-panel-bg);
+  border: 1px solid var(--color-panel-border);
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -160,10 +202,16 @@
 }
 
 .settings-button:hover {
-  color: #fff;
+  color: var(--color-text);
   background: linear-gradient(135deg, rgba(80, 80, 130, 0.4), rgba(60, 60, 100, 0.4));
   border-color: rgba(150, 150, 200, 0.6);
   box-shadow: 0 0 15px rgba(100, 100, 200, 0.3);
+}
+
+[data-theme="gameboy"] .settings-button:hover {
+  background: var(--color-button-bg);
+  border-color: var(--color-button-border);
+  box-shadow: none;
 }
 
 /* Responsive adjustments */

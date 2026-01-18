@@ -1,0 +1,23 @@
+.theme-toggle {
+  padding: 10px 15px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  background: var(--color-panel-bg);
+  border: 1px solid var(--color-panel-border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  letter-spacing: 2px;
+  font-weight: bold;
+}
+
+.theme-toggle:hover {
+  color: var(--color-text);
+  border-color: var(--color-accent);
+  box-shadow: 0 0 15px rgba(100, 100, 200, 0.3);
+}
+
+[data-theme="gameboy"] .theme-toggle:hover {
+  box-shadow: none;
+}

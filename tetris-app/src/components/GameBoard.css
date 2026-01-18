@@ -1,0 +1,81 @@
+.game-board-container {
+  position: relative;
+  padding: 4px;
+  background: var(--color-panel-bg);
+  border-radius: 8px;
+  border: 2px solid var(--color-panel-border);
+}
+
+.game-board {
+  position: relative;
+  background: var(--color-board-bg);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* Gameboy mode: convert tetromino colors to green shades */
+[data-theme="gameboy"] .game-board {
+  filter: sepia(100%) hue-rotate(50deg) saturate(200%) brightness(0.9);
+}
+
+.grid-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.grid-row {
+  display: flex;
+}
+
+.grid-cell {
+  box-sizing: border-box;
+  border: 1px solid var(--color-grid-line);
+}
+
+.cell {
+  position: absolute;
+  box-sizing: border-box;
+  border-radius: 2px;
+  margin: 1px;
+}
+
+.cell.filled {
+  border: 2px solid rgba(255, 255, 255, 0.4);
+}
+
+.cell.ghost {
+  border: 2px dashed;
+  opacity: 0.25;
+}
+
+.cell.current {
+  /* Removed continuous animation - too expensive */
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.cell.clearing {
+  animation: clear 0.15s ease-out forwards;
+}
+
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  will-change: transform, opacity;
+}
+
+@keyframes clear {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+}

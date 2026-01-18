@@ -1,6 +1,7 @@
 import { useEffect, useCallback, useState, useRef } from 'react';
 import { useSound } from '../hooks/useSound';
 import { useMusic } from '../hooks/useMusic';
+import { useTheme } from '../hooks/useTheme';
 import { useGameLogic } from '../hooks/useGameLogic';
 import { useKeyBindings } from '../hooks/useKeyBindings';
 import { useHighScores } from '../hooks/useHighScores';
@@ -11,6 +12,7 @@ import { HoldPiece } from './HoldPiece';
 import { ScorePanel } from './ScorePanel';
 import { Controls } from './Controls';
 import { MusicSelector } from './MusicSelector';
+import { ThemeToggle } from './ThemeToggle';
 import { KeyBindings } from './KeyBindings';
 import { HighScoreEntry } from './HighScoreEntry';
 import { Leaderboard } from './Leaderboard';
@@ -19,6 +21,7 @@ import './Game.css';
 export function Game() {
   const sound = useSound();
   const music = useMusic();
+  const { theme, toggleTheme } = useTheme();
   const [showSettings, setShowSettings] = useState(false);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [lastSubmittedScore, setLastSubmittedScore] = useState(null);
@@ -204,7 +207,7 @@ export function Game() {
 
   return (
     <div className="game-container">
-      <Starfield />
+      {theme === 'modern' && <Starfield />}
 
       <div className="game-content">
         <header className="game-header">
@@ -270,6 +273,7 @@ export function Game() {
               currentTrack={music.currentTrack}
               onTrackChange={music.setTrack}
             />
+            <ThemeToggle theme={theme} onToggle={toggleTheme} />
             <button className="settings-button" onClick={openSettings}>
               Settings
             </button>
