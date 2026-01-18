@@ -1,0 +1,50 @@
+/* Theme: Modern (default) */
+:root {
+  --color-bg: #000010;
+  --color-text: #ffffff;
+  --color-text-muted: rgba(200, 200, 255, 0.8);
+  --color-accent: #88f;
+  --color-accent-secondary: #f80;
+  --color-panel-bg: linear-gradient(135deg, rgba(100, 100, 150, 0.2), rgba(50, 50, 80, 0.2));
+  --color-panel-border: rgba(150, 150, 200, 0.4);
+  --color-board-bg: rgba(0, 0, 20, 0.9);
+  --color-grid-line: rgba(50, 50, 80, 0.4);
+  --color-overlay-bg: rgba(0, 0, 20, 0.9);
+  --color-button-bg: linear-gradient(135deg, rgba(100, 100, 200, 0.5), rgba(50, 50, 150, 0.5));
+  --color-button-border: rgba(150, 150, 255, 0.6);
+  --color-level: #0f0;
+}
+
+/* Theme: Gameboy DMG */
+[data-theme="gameboy"] {
+  --color-bg: #0f380f;
+  --color-text: #9bbc0f;
+  --color-text-muted: #8bac0f;
+  --color-accent: #9bbc0f;
+  --color-accent-secondary: #9bbc0f;
+  --color-panel-bg: #0f380f;
+  --color-panel-border: #306230;
+  --color-board-bg: #0f380f;
+  --color-grid-line: #306230;
+  --color-overlay-bg: rgba(15, 56, 15, 0.95);
+  --color-button-bg: #306230;
+  --color-button-border: #9bbc0f;
+  --color-level: #9bbc0f;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--color-bg);
+}
