@@ -234,3 +234,17 @@
     flex-direction: row;
   }
 }
+
+/* Touch device adjustments - add bottom padding when touch controls may be present */
+@media (pointer: coarse) {
+  .game-container {
+    padding-bottom: 220px;
+  }
+}
+
+/* Landscape on mobile - less padding needed */
+@media (pointer: coarse) and (max-height: 500px) and (orientation: landscape) {
+  .game-container {
+    padding-bottom: 160px;
+  }
+}

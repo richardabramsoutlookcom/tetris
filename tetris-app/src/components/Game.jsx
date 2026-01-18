@@ -16,6 +16,7 @@ import { ThemeToggle } from './ThemeToggle';
 import { KeyBindings } from './KeyBindings';
 import { HighScoreEntry } from './HighScoreEntry';
 import { Leaderboard } from './Leaderboard';
+import { TouchControls } from './TouchControls';
 import './Game.css';
 
 export function Game() {
@@ -305,6 +306,19 @@ export function Game() {
           scores={highScores}
           onClose={handleCloseLeaderboard}
           currentScore={lastSubmittedScore}
+        />
+      )}
+
+      {/* Touch controls for mobile devices */}
+      {('ontouchstart' in window || navigator.maxTouchPoints > 0) &&
+        isPlaying && !gameOver && !isPaused && !showSettings && !showHighScoreEntry && !showLeaderboard && (
+        <TouchControls
+          onLeft={() => movePiece(-1, 0)}
+          onRight={() => movePiece(1, 0)}
+          onDown={() => softDrop()}
+          onRotate={() => rotatePiece(1)}
+          onHold={() => holdPiece()}
+          onDrop={() => hardDrop()}
         />
       )}
     </div>
