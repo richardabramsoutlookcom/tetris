@@ -1,0 +1,213 @@
+.touch-controls {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 30px 30px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.7) 60%, transparent);
+  z-index: 100;
+  touch-action: none;
+}
+
+/* Gameboy theme adjustments */
+[data-theme="gameboy"] .touch-controls {
+  background: linear-gradient(to top, rgba(155, 188, 15, 0.95), rgba(155, 188, 15, 0.8) 60%, transparent);
+}
+
+/* Hide on non-touch devices and larger screens */
+@media (hover: hover) and (pointer: fine) {
+  .touch-controls {
+    display: none;
+  }
+}
+
+/* D-Pad Layout */
+.touch-dpad {
+  display: grid;
+  grid-template-columns: 60px 60px 60px;
+  grid-template-rows: 60px 60px 60px;
+  gap: 4px;
+}
+
+.dpad-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-panel-bg, rgba(30, 30, 60, 0.8));
+  border: 2px solid var(--color-panel-border, rgba(100, 100, 180, 0.5));
+  border-radius: 8px;
+  color: var(--color-text, #fff);
+  font-size: 24px;
+  cursor: pointer;
+  transition: background 0.1s, transform 0.1s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dpad-button:active,
+.dpad-button.active {
+  background: var(--color-accent, #4a9eff);
+  transform: scale(0.95);
+}
+
+[data-theme="gameboy"] .dpad-button:active,
+[data-theme="gameboy"] .dpad-button.active {
+  background: #306230;
+}
+
+.dpad-arrow {
+  line-height: 1;
+}
+
+/* D-Pad positioning */
+.dpad-up {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.dpad-left {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.dpad-center {
+  grid-column: 2;
+  grid-row: 2;
+  background: var(--color-panel-bg, rgba(30, 30, 60, 0.4));
+  border-radius: 4px;
+}
+
+.dpad-right {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+.dpad-down {
+  grid-column: 2;
+  grid-row: 3;
+}
+
+/* Action Buttons */
+.touch-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  justify-content: center;
+}
+
+.action-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-panel-bg, rgba(30, 30, 60, 0.8));
+  border: 2px solid var(--color-panel-border, rgba(100, 100, 180, 0.5));
+  border-radius: 12px;
+  color: var(--color-text, #fff);
+  font-size: 14px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: background 0.1s, transform 0.1s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.action-button:active,
+.action-button.active {
+  background: var(--color-accent, #4a9eff);
+  transform: scale(0.95);
+}
+
+[data-theme="gameboy"] .action-button:active,
+[data-theme="gameboy"] .action-button.active {
+  background: #306230;
+}
+
+.action-hold {
+  width: 80px;
+  height: 60px;
+}
+
+.action-drop {
+  width: 80px;
+  height: 90px;
+  font-size: 16px;
+  background: linear-gradient(135deg, rgba(70, 130, 180, 0.8), rgba(30, 60, 90, 0.8));
+  border-color: var(--color-accent, #4a9eff);
+}
+
+[data-theme="gameboy"] .action-drop {
+  background: var(--color-panel-bg);
+  border-color: var(--color-panel-border);
+}
+
+.action-drop:active,
+.action-drop.active {
+  background: linear-gradient(135deg, rgba(100, 180, 255, 0.9), rgba(50, 100, 150, 0.9));
+}
+
+[data-theme="gameboy"] .action-drop:active,
+[data-theme="gameboy"] .action-drop.active {
+  background: #306230;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 400px) {
+  .touch-controls {
+    padding: 15px 20px 25px;
+  }
+
+  .touch-dpad {
+    grid-template-columns: 50px 50px 50px;
+    grid-template-rows: 50px 50px 50px;
+    gap: 3px;
+  }
+
+  .dpad-button {
+    font-size: 20px;
+  }
+
+  .action-hold {
+    width: 70px;
+    height: 50px;
+  }
+
+  .action-drop {
+    width: 70px;
+    height: 75px;
+    font-size: 14px;
+  }
+}
+
+/* Landscape mode adjustments */
+@media (max-height: 500px) and (orientation: landscape) {
+  .touch-controls {
+    padding: 10px 20px 15px;
+  }
+
+  .touch-dpad {
+    grid-template-columns: 45px 45px 45px;
+    grid-template-rows: 45px 45px 45px;
+    gap: 2px;
+  }
+
+  .dpad-button {
+    font-size: 18px;
+  }
+
+  .touch-actions {
+    flex-direction: row;
+    gap: 10px;
+  }
+
+  .action-hold {
+    width: 65px;
+    height: 70px;
+  }
+
+  .action-drop {
+    width: 65px;
+    height: 70px;
+    font-size: 14px;
+  }
+}
