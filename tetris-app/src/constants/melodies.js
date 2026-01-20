@@ -1,168 +1,1333 @@
-// Gameboy Tetris Melodies
+// Modern Multi-layer Tetris Music System
 // Note frequencies in Hz (standard tuning A4=440Hz)
 
-// Note frequency reference
-const NOTES = {
-  // Octave 4
-  C4: 262,
-  D4: 294,
-  E4: 330,
-  F4: 349,
-  G4: 392,
-  A4: 440,
-  B4: 494,
-  // Octave 5
-  C5: 523,
-  D5: 587,
-  E5: 659,
-  F5: 698,
-  G5: 784,
-  A5: 880,
-  B5: 988,
-  // Octave 6
-  C6: 1047,
+// Extended note frequency reference - Octaves 2-6
+export const NOTES = {
+  // Octave 2 (bass)
+  E2: 82, F2: 87, G2: 98, A2: 110, B2: 123,
+  // Octave 3 (low)
+  C3: 131, D3: 147, E3: 165, F3: 175, G3: 196, A3: 220, B3: 247,
+  // Octave 4 (mid)
+  C4: 262, D4: 294, E4: 330, F4: 349, G4: 392, A4: 440, B4: 494,
+  // Octave 5 (high)
+  C5: 523, D5: 587, E5: 659, F5: 698, G5: 784, A5: 880, B5: 988,
+  // Octave 6 (very high)
+  C6: 1047, D6: 1175, E6: 1319, F6: 1397, G6: 1568, A6: 1760,
 };
 
-// Tempo: ~120 BPM = 500ms per beat
-const BEAT = 500;
-const HALF = BEAT / 2;     // eighth note = 250ms
-const QUARTER = BEAT;      // quarter note = 500ms
-const DOTTED_Q = BEAT * 1.5; // dotted quarter = 750ms
+// Timing constants (140 BPM base)
+const BPM = 140;
+const BEAT = 60000 / BPM; // ~428ms per beat
+const SIXTEENTH = BEAT / 4;
+const EIGHTH = BEAT / 2;
+const QUARTER = BEAT;
+const HALF = BEAT * 2;
+const WHOLE = BEAT * 4;
 
-// Type A: Korobeiniki (the famous Tetris theme)
-// Main melody in E minor, recognizable motif
-export const MELODY_TYPE_A = [
-  // Bar 1: E-B-C-D
-  { note: NOTES.E5, duration: QUARTER },
-  { note: NOTES.B4, duration: HALF },
-  { note: NOTES.C5, duration: HALF },
-  { note: NOTES.D5, duration: QUARTER },
-  // Bar 2: C-B-A
-  { note: NOTES.C5, duration: HALF },
-  { note: NOTES.B4, duration: HALF },
-  { note: NOTES.A4, duration: QUARTER },
-  { note: NOTES.A4, duration: HALF },
-  // Bar 3: C-E-D-C
-  { note: NOTES.C5, duration: HALF },
-  { note: NOTES.E5, duration: QUARTER },
-  { note: NOTES.D5, duration: HALF },
-  { note: NOTES.C5, duration: HALF },
-  // Bar 4: B-C-D-E
-  { note: NOTES.B4, duration: QUARTER },
-  { note: NOTES.C5, duration: HALF },
-  { note: NOTES.D5, duration: QUARTER },
-  { note: NOTES.E5, duration: QUARTER },
-  // Bar 5: C-A-A
-  { note: NOTES.C5, duration: QUARTER },
-  { note: NOTES.A4, duration: QUARTER },
-  { note: NOTES.A4, duration: QUARTER, rest: HALF },
-  // Bar 6: D-F-A-G-F
-  { note: NOTES.D5, duration: QUARTER },
-  { note: NOTES.F5, duration: HALF },
-  { note: NOTES.A5, duration: QUARTER },
-  { note: NOTES.G5, duration: HALF },
-  { note: NOTES.F5, duration: HALF },
-  // Bar 7: E-C-E-D-C
-  { note: NOTES.E5, duration: DOTTED_Q },
-  { note: NOTES.C5, duration: HALF },
-  { note: NOTES.E5, duration: QUARTER },
-  { note: NOTES.D5, duration: HALF },
-  { note: NOTES.C5, duration: HALF },
-  // Bar 8: B-B-C-D-E-C-A-A (ending phrase)
-  { note: NOTES.B4, duration: QUARTER },
-  { note: NOTES.B4, duration: HALF },
-  { note: NOTES.C5, duration: HALF },
-  { note: NOTES.D5, duration: QUARTER },
-  { note: NOTES.E5, duration: QUARTER },
-  { note: NOTES.C5, duration: QUARTER },
-  { note: NOTES.A4, duration: QUARTER },
-  { note: NOTES.A4, duration: QUARTER, rest: QUARTER },
-];
+// Drum pattern constants
+const KICK = 'kick';
+const SNARE = 'snare';
+const HIHAT = 'hihat';
 
-// Type B: March-like melody in C major
-// Simpler pattern, more staccato feel
-export const MELODY_TYPE_B = [
-  // Bar 1: Staccato march pattern
-  { note: NOTES.C5, duration: HALF, rest: HALF / 2 },
-  { note: NOTES.G4, duration: HALF, rest: HALF / 2 },
-  { note: NOTES.C5, duration: HALF, rest: HALF / 2 },
-  { note: NOTES.E5, duration: HALF, rest: HALF / 2 },
-  // Bar 2
-  { note: NOTES.D5, duration: HALF, rest: HALF / 2 },
-  { note: NOTES.B4, duration: HALF, rest: HALF / 2 },
-  { note: NOTES.D5, duration: HALF, rest: HALF / 2 },
-  { note: NOTES.G5, duration: HALF, rest: HALF / 2 },
-  // Bar 3: Descending run
-  { note: NOTES.E5, duration: HALF },
-  { note: NOTES.D5, duration: HALF },
-  { note: NOTES.C5, duration: HALF },
-  { note: NOTES.B4, duration: HALF },
-  // Bar 4: Resolution
-  { note: NOTES.C5, duration: QUARTER },
-  { note: NOTES.G4, duration: QUARTER, rest: QUARTER },
-  // Bar 5: Second phrase
-  { note: NOTES.E5, duration: HALF, rest: HALF / 2 },
-  { note: NOTES.C5, duration: HALF, rest: HALF / 2 },
-  { note: NOTES.E5, duration: HALF, rest: HALF / 2 },
-  { note: NOTES.G5, duration: HALF, rest: HALF / 2 },
-  // Bar 6
-  { note: NOTES.F5, duration: HALF, rest: HALF / 2 },
-  { note: NOTES.D5, duration: HALF, rest: HALF / 2 },
-  { note: NOTES.F5, duration: HALF, rest: HALF / 2 },
-  { note: NOTES.A5, duration: HALF, rest: HALF / 2 },
-  // Bar 7: Descending
-  { note: NOTES.G5, duration: HALF },
-  { note: NOTES.F5, duration: HALF },
-  { note: NOTES.E5, duration: HALF },
-  { note: NOTES.D5, duration: HALF },
-  // Bar 8: Final cadence
-  { note: NOTES.E5, duration: QUARTER },
-  { note: NOTES.C5, duration: QUARTER, rest: QUARTER },
-];
+// Type A: Korobeiniki - The famous Tetris theme
+// E minor key, driving rhythm
+export const TRACK_TYPE_A = {
+  bpm: 140,
+  key: 'Em',
 
-// Type C: Gentle/flowing melody in F major
-// Legato quarter notes, scalar passages
-export const MELODY_TYPE_C = [
-  // Bar 1: Rising F major scale fragment
-  { note: NOTES.F4, duration: QUARTER },
-  { note: NOTES.G4, duration: QUARTER },
-  { note: NOTES.A4, duration: QUARTER },
-  { note: NOTES.C5, duration: QUARTER },
-  // Bar 2: Gentle descent
-  { note: NOTES.D5, duration: QUARTER },
-  { note: NOTES.C5, duration: QUARTER },
-  { note: NOTES.A4, duration: QUARTER },
-  { note: NOTES.G4, duration: QUARTER },
-  // Bar 3: Melodic phrase
-  { note: NOTES.F4, duration: QUARTER },
-  { note: NOTES.A4, duration: QUARTER },
-  { note: NOTES.C5, duration: QUARTER },
-  { note: NOTES.F5, duration: QUARTER },
-  // Bar 4: Resolution
-  { note: NOTES.E5, duration: QUARTER },
-  { note: NOTES.D5, duration: QUARTER },
-  { note: NOTES.C5, duration: HALF },
-  // Bar 5: Second phrase - higher register
-  { note: NOTES.A4, duration: QUARTER },
-  { note: NOTES.C5, duration: QUARTER },
-  { note: NOTES.F5, duration: QUARTER },
-  { note: NOTES.E5, duration: QUARTER },
-  // Bar 6: Flowing
-  { note: NOTES.D5, duration: QUARTER },
-  { note: NOTES.E5, duration: QUARTER },
-  { note: NOTES.F5, duration: QUARTER },
-  { note: NOTES.G5, duration: QUARTER },
-  // Bar 7: Gentle descent
-  { note: NOTES.A5, duration: QUARTER },
-  { note: NOTES.G5, duration: QUARTER },
-  { note: NOTES.F5, duration: QUARTER },
-  { note: NOTES.E5, duration: QUARTER },
-  // Bar 8: Final cadence to tonic
-  { note: NOTES.D5, duration: QUARTER },
-  { note: NOTES.C5, duration: QUARTER },
-  { note: NOTES.A4, duration: QUARTER },
-  { note: NOTES.F4, duration: QUARTER, rest: QUARTER },
-];
+  // Bass voice - Sine wave, low octave, steady rhythm
+  // Plays root notes on strong beats
+  bass: [
+    // Bar 1-2: E minor
+    { note: NOTES.E2, duration: QUARTER },
+    { note: NOTES.E2, duration: QUARTER },
+    { note: NOTES.B2, duration: QUARTER },
+    { note: NOTES.B2, duration: QUARTER },
+    { note: NOTES.A2, duration: QUARTER },
+    { note: NOTES.A2, duration: QUARTER },
+    { note: NOTES.E2, duration: QUARTER },
+    { note: NOTES.E2, duration: QUARTER },
+    // Bar 3-4
+    { note: NOTES.A2, duration: QUARTER },
+    { note: NOTES.A2, duration: QUARTER },
+    { note: NOTES.G2, duration: QUARTER },
+    { note: NOTES.G2, duration: QUARTER },
+    { note: NOTES.E2, duration: QUARTER },
+    { note: NOTES.B2, duration: QUARTER },
+    { note: NOTES.E2, duration: QUARTER },
+    { note: NOTES.E2, duration: QUARTER },
+    // Bar 5-6: D major section
+    { note: NOTES.F2, duration: QUARTER },
+    { note: NOTES.F2, duration: QUARTER },
+    { note: NOTES.A2, duration: QUARTER },
+    { note: NOTES.A2, duration: QUARTER },
+    { note: NOTES.G2, duration: QUARTER },
+    { note: NOTES.G2, duration: QUARTER },
+    { note: NOTES.E2, duration: QUARTER },
+    { note: NOTES.E2, duration: QUARTER },
+    // Bar 7-8: Resolution
+    { note: NOTES.B2, duration: QUARTER },
+    { note: NOTES.B2, duration: QUARTER },
+    { note: NOTES.E2, duration: QUARTER },
+    { note: NOTES.E2, duration: QUARTER },
+    { note: NOTES.A2, duration: QUARTER },
+    { note: NOTES.E2, duration: QUARTER },
+    { note: NOTES.E2, duration: HALF },
+  ],
+
+  // Lead voice - Sawtooth with filter, main melody
+  lead: [
+    // Bar 1: E-B-C-D
+    { note: NOTES.E5, duration: QUARTER },
+    { note: NOTES.B4, duration: EIGHTH },
+    { note: NOTES.C5, duration: EIGHTH },
+    { note: NOTES.D5, duration: QUARTER },
+    { note: NOTES.C5, duration: EIGHTH },
+    { note: NOTES.B4, duration: EIGHTH },
+    // Bar 2: A pattern
+    { note: NOTES.A4, duration: QUARTER },
+    { note: NOTES.A4, duration: EIGHTH },
+    { note: NOTES.C5, duration: EIGHTH },
+    { note: NOTES.E5, duration: QUARTER },
+    { note: NOTES.D5, duration: EIGHTH },
+    { note: NOTES.C5, duration: EIGHTH },
+    // Bar 3: B resolve
+    { note: NOTES.B4, duration: QUARTER + EIGHTH },
+    { note: NOTES.C5, duration: EIGHTH },
+    { note: NOTES.D5, duration: QUARTER },
+    { note: NOTES.E5, duration: QUARTER },
+    // Bar 4: C-A resolve
+    { note: NOTES.C5, duration: QUARTER },
+    { note: NOTES.A4, duration: QUARTER },
+    { note: NOTES.A4, duration: QUARTER },
+    { note: null, duration: QUARTER }, // rest
+    // Bar 5: D-F-A rise
+    { note: NOTES.D5, duration: QUARTER + EIGHTH },
+    { note: NOTES.F5, duration: EIGHTH },
+    { note: NOTES.A5, duration: QUARTER },
+    { note: NOTES.G5, duration: EIGHTH },
+    { note: NOTES.F5, duration: EIGHTH },
+    // Bar 6: E melodic line
+    { note: NOTES.E5, duration: QUARTER + EIGHTH },
+    { note: NOTES.C5, duration: EIGHTH },
+    { note: NOTES.E5, duration: QUARTER },
+    { note: NOTES.D5, duration: EIGHTH },
+    { note: NOTES.C5, duration: EIGHTH },
+    // Bar 7: B-C-D rise
+    { note: NOTES.B4, duration: QUARTER + EIGHTH },
+    { note: NOTES.C5, duration: EIGHTH },
+    { note: NOTES.D5, duration: QUARTER },
+    { note: NOTES.E5, duration: QUARTER },
+    // Bar 8: Final phrase
+    { note: NOTES.C5, duration: QUARTER },
+    { note: NOTES.A4, duration: QUARTER },
+    { note: NOTES.A4, duration: QUARTER },
+    { note: null, duration: QUARTER },
+  ],
+
+  // Harmony voice - Triangle wave pads, sustained chord tones
+  harmony: [
+    // Em chord tones
+    { note: NOTES.G4, duration: WHOLE },
+    { note: NOTES.B4, duration: WHOLE },
+    // Am chord
+    { note: NOTES.C5, duration: WHOLE },
+    { note: NOTES.E4, duration: WHOLE },
+    // D major
+    { note: NOTES.F4, duration: WHOLE },
+    { note: NOTES.A4, duration: WHOLE },
+    // Em resolve
+    { note: NOTES.G4, duration: WHOLE },
+    { note: NOTES.B4, duration: WHOLE },
+  ],
+
+  // Arpeggio voice - Square wave, fast 16th-note patterns
+  arpeggio: [
+    // Em arpeggio pattern
+    { note: NOTES.E4, duration: SIXTEENTH },
+    { note: NOTES.G4, duration: SIXTEENTH },
+    { note: NOTES.B4, duration: SIXTEENTH },
+    { note: NOTES.E5, duration: SIXTEENTH },
+    { note: NOTES.B4, duration: SIXTEENTH },
+    { note: NOTES.G4, duration: SIXTEENTH },
+    { note: NOTES.E4, duration: SIXTEENTH },
+    { note: NOTES.B3, duration: SIXTEENTH },
+    // Repeat with variation
+    { note: NOTES.E4, duration: SIXTEENTH },
+    { note: NOTES.G4, duration: SIXTEENTH },
+    { note: NOTES.B4, duration: SIXTEENTH },
+    { note: NOTES.G4, duration: SIXTEENTH },
+    { note: NOTES.E4, duration: SIXTEENTH },
+    { note: NOTES.G4, duration: SIXTEENTH },
+    { note: NOTES.B4, duration: SIXTEENTH },
+    { note: NOTES.E5, duration: SIXTEENTH },
+    // Am arpeggio
+    { note: NOTES.A3, duration: SIXTEENTH },
+    { note: NOTES.C4, duration: SIXTEENTH },
+    { note: NOTES.E4, duration: SIXTEENTH },
+    { note: NOTES.A4, duration: SIXTEENTH },
+    { note: NOTES.E4, duration: SIXTEENTH },
+    { note: NOTES.C4, duration: SIXTEENTH },
+    { note: NOTES.A3, duration: SIXTEENTH },
+    { note: NOTES.E3, duration: SIXTEENTH },
+    // Am variation
+    { note: NOTES.A3, duration: SIXTEENTH },
+    { note: NOTES.C4, duration: SIXTEENTH },
+    { note: NOTES.E4, duration: SIXTEENTH },
+    { note: NOTES.C4, duration: SIXTEENTH },
+    { note: NOTES.A3, duration: SIXTEENTH },
+    { note: NOTES.C4, duration: SIXTEENTH },
+    { note: NOTES.E4, duration: SIXTEENTH },
+    { note: NOTES.A4, duration: SIXTEENTH },
+    // D major arpeggio
+    { note: NOTES.D4, duration: SIXTEENTH },
+    { note: NOTES.F4, duration: SIXTEENTH },
+    { note: NOTES.A4, duration: SIXTEENTH },
+    { note: NOTES.D5, duration: SIXTEENTH },
+    { note: NOTES.A4, duration: SIXTEENTH },
+    { note: NOTES.F4, duration: SIXTEENTH },
+    { note: NOTES.D4, duration: SIXTEENTH },
+    { note: NOTES.A3, duration: SIXTEENTH },
+    // G major
+    { note: NOTES.G3, duration: SIXTEENTH },
+    { note: NOTES.B3, duration: SIXTEENTH },
+    { note: NOTES.D4, duration: SIXTEENTH },
+    { note: NOTES.G4, duration: SIXTEENTH },
+    { note: NOTES.D4, duration: SIXTEENTH },
+    { note: NOTES.B3, duration: SIXTEENTH },
+    { note: NOTES.G3, duration: SIXTEENTH },
+    { note: NOTES.D3, duration: SIXTEENTH },
+    // Em return
+    { note: NOTES.E4, duration: SIXTEENTH },
+    { note: NOTES.G4, duration: SIXTEENTH },
+    { note: NOTES.B4, duration: SIXTEENTH },
+    { note: NOTES.E5, duration: SIXTEENTH },
+    { note: NOTES.B4, duration: SIXTEENTH },
+    { note: NOTES.G4, duration: SIXTEENTH },
+    { note: NOTES.E4, duration: SIXTEENTH },
+    { note: NOTES.B3, duration: SIXTEENTH },
+    // Final Em
+    { note: NOTES.E4, duration: SIXTEENTH },
+    { note: NOTES.B4, duration: SIXTEENTH },
+    { note: NOTES.E5, duration: SIXTEENTH },
+    { note: NOTES.B4, duration: SIXTEENTH },
+    { note: NOTES.G4, duration: SIXTEENTH },
+    { note: NOTES.E4, duration: SIXTEENTH },
+    { note: NOTES.B3, duration: SIXTEENTH },
+    { note: NOTES.E4, duration: SIXTEENTH },
+  ],
+
+  // Drums - Kick/snare/hi-hat pattern
+  drums: [
+    // Standard 4/4 beat pattern repeated
+    { type: KICK, duration: EIGHTH },
+    { type: HIHAT, duration: EIGHTH },
+    { type: SNARE, duration: EIGHTH },
+    { type: HIHAT, duration: EIGHTH },
+    { type: KICK, duration: EIGHTH },
+    { type: HIHAT, duration: EIGHTH },
+    { type: SNARE, duration: EIGHTH },
+    { type: HIHAT, duration: EIGHTH },
+    // Variation
+    { type: KICK, duration: EIGHTH },
+    { type: KICK, duration: EIGHTH },
+    { type: SNARE, duration: EIGHTH },
+    { type: HIHAT, duration: EIGHTH },
+    { type: KICK, duration: EIGHTH },
+    { type: HIHAT, duration: EIGHTH },
+    { type: SNARE, duration: EIGHTH },
+    { type: HIHAT, duration: EIGHTH },
+  ],
+};
+
+// Type B: "Chiptune Folk March" - Gameboy Style
+// 120 BPM, A minor, Folk march feel with chiptune aesthetic
+// Structure: Intro -> Theme A -> Theme A' -> Theme B -> Breakdown -> Final Var -> Ending (~3 min)
+export const TRACK_TYPE_B = {
+  bpm: 120,
+  key: 'Am',
+
+  // Bass voice - Marching bass pattern following chord roots
+  // A minor folk progression: Am -> G -> F -> E -> Am -> Dm -> E -> Am
+  bass: [
+    // ========== INTRO (8 bars, 0:00-0:30) ==========
+    // Simple pedal on A to establish key
+    { note: NOTES.A2, duration: QUARTER },
+    { note: NOTES.A2, duration: QUARTER },
+    { note: NOTES.E3, duration: QUARTER },
+    { note: NOTES.A2, duration: QUARTER },
+    { note: NOTES.A2, duration: QUARTER },
+    { note: NOTES.A2, duration: QUARTER },
+    { note: NOTES.E3, duration: QUARTER },
+    { note: NOTES.A2, duration: QUARTER },
+    // Building
+    { note: NOTES.A2, duration: QUARTER },
+    { note: NOTES.C3, duration: QUARTER },
+    { note: NOTES.E3, duration: QUARTER },
+    { note: NOTES.A2, duration: QUARTER },
+    { note: NOTES.G2, duration: QUARTER },
+    { note: NOTES.B2, duration: QUARTER },
+    { note: NOTES.D3, duration: QUARTER },
+    { note: NOTES.G2, duration: QUARTER },
+    // Bars 5-8
+    { note: NOTES.F2, duration: QUARTER },
+    { note: NOTES.A2, duration: QUARTER },
+    { note: NOTES.C3, duration: QUARTER },
+    { note: NOTES.F2, duration: QUARTER },
+    { note: NOTES.E2, duration: QUARTER },
+    { note: NOTES.G2, duration: QUARTER },
+    { note: NOTES.B2, duration: QUARTER },
+    { note: NOTES.E2, duration: QUARTER },
+    { note: NOTES.A2, duration: QUARTER },
+    { note: NOTES.A2, duration: QUARTER },
+    { note: NOTES.E3, duration: QUARTER },
+    { note: NOTES.A2, duration: QUARTER },
+    { note: NOTES.A2, duration: HALF },
+    { note: NOTES.E2, duration: HALF },
+
+    // ========== THEME A (8 bars, 0:30-1:00) ==========
+    // Am -> G -> F -> E progression
+    { note: NOTES.A2, duration: QUARTER },
+    { note: NOTES.E3, duration: QUARTER },
+    { note: NOTES.A2, duration: QUARTER },
+    { note: NOTES.E3, duration: QUARTER },
+    { note: NOTES.A2, duration: QUARTER },
+    { note: NOTES.E3, duration: QUARTER },
+    { note: NOTES.A2, duration: QUARTER },
+    { note: NOTES.E3, duration: QUARTER },
+    { note: NOTES.G2, duration: QUARTER },
+    { note: NOTES.D3, duration: QUARTER },
+    { note: NOTES.G2, duration: QUARTER },
+    { note: NOTES.D3, duration: QUARTER },
+    { note: NOTES.G2, duration: QUARTER },
+    { note: NOTES.D3, duration: QUARTER },
+    { note: NOTES.G2, duration: QUARTER },
+    { note: NOTES.D3, duration: QUARTER },
+    { note: NOTES.F2, duration: QUARTER },
+    { note: NOTES.C3, duration: QUARTER },
+    { note: NOTES.F2, duration: QUARTER },
+    { note: NOTES.C3, duration: QUARTER },
+    { note: NOTES.F2, duration: QUARTER },
+    { note: NOTES.C3, duration: QUARTER },
+    { note: NOTES.F2, duration: QUARTER },
+    { note: NOTES.C3, duration: QUARTER },
+    { note: NOTES.E2, duration: QUARTER },
+    { note: NOTES.B2, duration: QUARTER },
+    { note: NOTES.E2, duration: QUARTER },
+    { note: NOTES.B2, duration: QUARTER },
+    { note: NOTES.E2, duration: QUARTER },
+    { note: NOTES.B2, duration: QUARTER },
+    { note: NOTES.E2, duration: HALF },
+
+    // ========== THEME A VARIATION (8 bars, 1:00-1:30) ==========
+    // Same chords but more movement
+    { note: NOTES.A2, duration: EIGHTH },
+    { note: NOTES.E3, duration: EIGHTH },
+    { note: NOTES.A2, duration: EIGHTH },
+    { note: NOTES.C3, duration: EIGHTH },
+    { note: NOTES.A2, duration: EIGHTH },
+    { note: NOTES.E3, duration: EIGHTH },
+    { note: NOTES.A2, duration: EIGHTH },
+    { note: NOTES.E3, duration: EIGHTH },
+    { note: NOTES.A2, duration: EIGHTH },
+    { note: NOTES.E3, duration: EIGHTH },
+    { note: NOTES.A2, duration: EIGHTH },
+    { note: NOTES.C3, duration: EIGHTH },
+    { note: NOTES.A2, duration: EIGHTH },
+    { note: NOTES.E3, duration: EIGHTH },
+    { note: NOTES.A2, duration: QUARTER },
+    { note: NOTES.G2, duration: EIGHTH },
+    { note: NOTES.D3, duration: EIGHTH },
+    { note: NOTES.G2, duration: EIGHTH },
+    { note: NOTES.B2, duration: EIGHTH },
+    { note: NOTES.G2, duration: EIGHTH },
+    { note: NOTES.D3, duration: EIGHTH },
+    { note: NOTES.G2, duration: EIGHTH },
+    { note: NOTES.D3, duration: EIGHTH },
+    { note: NOTES.G2, duration: EIGHTH },
+    { note: NOTES.D3, duration: EIGHTH },
+    { note: NOTES.G2, duration: EIGHTH },
+    { note: NOTES.B2, duration: EIGHTH },
+    { note: NOTES.G2, duration: EIGHTH },
+    { note: NOTES.D3, duration: EIGHTH },
+    { note: NOTES.G2, duration: QUARTER },
+    { note: NOTES.F2, duration: EIGHTH },
+    { note: NOTES.C3, duration: EIGHTH },
+    { note: NOTES.F2, duration: EIGHTH },
+    { note: NOTES.A2, duration: EIGHTH },
+    { note: NOTES.F2, duration: EIGHTH },
+    { note: NOTES.C3, duration: EIGHTH },
+    { note: NOTES.F2, duration: EIGHTH },
+    { note: NOTES.C3, duration: EIGHTH },
+    { note: NOTES.E2, duration: EIGHTH },
+    { note: NOTES.B2, duration: EIGHTH },
+    { note: NOTES.E2, duration: EIGHTH },
+    { note: NOTES.G2, duration: EIGHTH },
+    { note: NOTES.E2, duration: EIGHTH },
+    { note: NOTES.B2, duration: EIGHTH },
+    { note: NOTES.E2, duration: QUARTER },
+
+    // ========== THEME B (8 bars, 1:30-2:00) ==========
+    // Dm -> G -> C -> Am -> Dm -> E -> Am
+    { note: NOTES.D3, duration: QUARTER },
+    { note: NOTES.A2, duration: QUARTER },
+    { note: NOTES.D3, duration: QUARTER },
+    { note: NOTES.F2, duration: QUARTER },
+    { note: NOTES.D3, duration: QUARTER },
+    { note: NOTES.A2, duration: QUARTER },
+    { note: NOTES.D3, duration: QUARTER },
+    { note: NOTES.F2, duration: QUARTER },
+    { note: NOTES.G2, duration: QUARTER },
+    { note: NOTES.D3, duration: QUARTER },
+    { note: NOTES.G2, duration: QUARTER },
+    { note: NOTES.B2, duration: QUARTER },
+    { note: NOTES.C3, duration: QUARTER },
+    { note: NOTES.G2, duration: QUARTER },
+    { note: NOTES.C3, duration: QUARTER },
+    { note: NOTES.E3, duration: QUARTER },
+    { note: NOTES.A2, duration: QUARTER },
+    { note: NOTES.E3, duration: QUARTER },
+    { note: NOTES.A2, duration: QUARTER },
+    { note: NOTES.C3, duration: QUARTER },
+    { note: NOTES.D3, duration: QUARTER },
+    { note: NOTES.A2, duration: QUARTER },
+    { note: NOTES.D3, duration: QUARTER },
+    { note: NOTES.F2, duration: QUARTER },
+    { note: NOTES.E2, duration: QUARTER },
+    { note: NOTES.B2, duration: QUARTER },
+    { note: NOTES.E2, duration: QUARTER },
+    { note: NOTES.G2, duration: QUARTER },
+    { note: NOTES.A2, duration: HALF },
+    { note: NOTES.E2, duration: HALF },
+
+    // ========== BREAKDOWN (8 bars, 2:00-2:30) ==========
+    // Sparse, building tension - Am pedal
+    { note: NOTES.A2, duration: WHOLE },
+    { note: NOTES.A2, duration: WHOLE },
+    { note: NOTES.A2, duration: HALF },
+    { note: NOTES.E2, duration: HALF },
+    { note: NOTES.A2, duration: HALF },
+    { note: NOTES.E2, duration: HALF },
+    // Building back
+    { note: NOTES.A2, duration: QUARTER },
+    { note: NOTES.A2, duration: QUARTER },
+    { note: NOTES.E3, duration: QUARTER },
+    { note: NOTES.A2, duration: QUARTER },
+    { note: NOTES.G2, duration: QUARTER },
+    { note: NOTES.G2, duration: QUARTER },
+    { note: NOTES.D3, duration: QUARTER },
+    { note: NOTES.G2, duration: QUARTER },
+    { note: NOTES.F2, duration: QUARTER },
+    { note: NOTES.F2, duration: QUARTER },
+    { note: NOTES.C3, duration: QUARTER },
+    { note: NOTES.F2, duration: QUARTER },
+    { note: NOTES.E2, duration: QUARTER },
+    { note: NOTES.E2, duration: QUARTER },
+    { note: NOTES.B2, duration: QUARTER },
+    { note: NOTES.E2, duration: QUARTER },
+
+    // ========== FINAL VARIATION (8 bars, 2:30-2:55) ==========
+    // Full energy march
+    { note: NOTES.A2, duration: EIGHTH },
+    { note: NOTES.A2, duration: EIGHTH },
+    { note: NOTES.E3, duration: EIGHTH },
+    { note: NOTES.A2, duration: EIGHTH },
+    { note: NOTES.A2, duration: EIGHTH },
+    { note: NOTES.C3, duration: EIGHTH },
+    { note: NOTES.E3, duration: EIGHTH },
+    { note: NOTES.A2, duration: EIGHTH },
+    { note: NOTES.A2, duration: EIGHTH },
+    { note: NOTES.A2, duration: EIGHTH },
+    { note: NOTES.E3, duration: EIGHTH },
+    { note: NOTES.A2, duration: EIGHTH },
+    { note: NOTES.A2, duration: EIGHTH },
+    { note: NOTES.C3, duration: EIGHTH },
+    { note: NOTES.E3, duration: EIGHTH },
+    { note: NOTES.A2, duration: EIGHTH },
+    { note: NOTES.G2, duration: EIGHTH },
+    { note: NOTES.G2, duration: EIGHTH },
+    { note: NOTES.D3, duration: EIGHTH },
+    { note: NOTES.G2, duration: EIGHTH },
+    { note: NOTES.G2, duration: EIGHTH },
+    { note: NOTES.B2, duration: EIGHTH },
+    { note: NOTES.D3, duration: EIGHTH },
+    { note: NOTES.G2, duration: EIGHTH },
+    { note: NOTES.F2, duration: EIGHTH },
+    { note: NOTES.F2, duration: EIGHTH },
+    { note: NOTES.C3, duration: EIGHTH },
+    { note: NOTES.F2, duration: EIGHTH },
+    { note: NOTES.F2, duration: EIGHTH },
+    { note: NOTES.A2, duration: EIGHTH },
+    { note: NOTES.C3, duration: EIGHTH },
+    { note: NOTES.F2, duration: EIGHTH },
+    { note: NOTES.E2, duration: EIGHTH },
+    { note: NOTES.E2, duration: EIGHTH },
+    { note: NOTES.B2, duration: EIGHTH },
+    { note: NOTES.E2, duration: EIGHTH },
+    { note: NOTES.E2, duration: EIGHTH },
+    { note: NOTES.G2, duration: EIGHTH },
+    { note: NOTES.B2, duration: EIGHTH },
+    { note: NOTES.E2, duration: EIGHTH },
+
+    // ========== ENDING (2 bars, 2:55-3:05) ==========
+    { note: NOTES.A2, duration: QUARTER },
+    { note: NOTES.E3, duration: QUARTER },
+    { note: NOTES.A2, duration: QUARTER },
+    { note: NOTES.E3, duration: QUARTER },
+    { note: NOTES.A2, duration: WHOLE },
+  ],
+
+  // Lead voice - Folk melody in A minor (from ABC notation)
+  lead: [
+    // ========== INTRO (8 bars) ==========
+    // Simple pickup into main theme
+    { note: null, duration: HALF },
+    { note: NOTES.E4, duration: EIGHTH },
+    { note: NOTES.A4, duration: EIGHTH },
+    { note: NOTES.C5, duration: QUARTER },
+    { note: NOTES.B4, duration: EIGHTH },
+    { note: NOTES.A4, duration: EIGHTH },
+    { note: NOTES.G4, duration: QUARTER },
+    { note: NOTES.E4, duration: QUARTER },
+    { note: NOTES.A4, duration: HALF },
+    { note: null, duration: HALF },
+    // Bar 3-4
+    { note: NOTES.E4, duration: EIGHTH },
+    { note: NOTES.A4, duration: EIGHTH },
+    { note: NOTES.C5, duration: QUARTER },
+    { note: NOTES.D5, duration: QUARTER },
+    { note: NOTES.E5, duration: EIGHTH },
+    { note: NOTES.D5, duration: EIGHTH },
+    { note: NOTES.C5, duration: QUARTER },
+    { note: NOTES.A4, duration: QUARTER },
+    { note: NOTES.B4, duration: HALF },
+    { note: null, duration: HALF },
+    // Bar 5-6
+    { note: NOTES.C5, duration: QUARTER },
+    { note: NOTES.D5, duration: EIGHTH },
+    { note: NOTES.E5, duration: EIGHTH },
+    { note: NOTES.F5, duration: QUARTER },
+    { note: NOTES.E5, duration: QUARTER },
+    { note: NOTES.D5, duration: QUARTER },
+    { note: NOTES.C5, duration: QUARTER },
+    { note: NOTES.B4, duration: QUARTER },
+    { note: NOTES.A4, duration: QUARTER },
+    // Bar 7-8
+    { note: NOTES.E4, duration: EIGHTH },
+    { note: NOTES.G4, duration: EIGHTH },
+    { note: NOTES.A4, duration: QUARTER },
+    { note: NOTES.B4, duration: QUARTER },
+    { note: NOTES.A4, duration: HALF },
+    { note: null, duration: WHOLE },
+
+    // ========== THEME A (8 bars) - Main melody ==========
+    // "A,2 CD E2 DC | B,2 A,G, A,4 |"
+    { note: NOTES.A4, duration: QUARTER },
+    { note: NOTES.C5, duration: EIGHTH },
+    { note: NOTES.D5, duration: EIGHTH },
+    { note: NOTES.E5, duration: QUARTER },
+    { note: NOTES.D5, duration: EIGHTH },
+    { note: NOTES.C5, duration: EIGHTH },
+    { note: NOTES.B4, duration: QUARTER },
+    { note: NOTES.A4, duration: EIGHTH },
+    { note: NOTES.G4, duration: EIGHTH },
+    { note: NOTES.A4, duration: HALF },
+    // "A,2 CD E2 FE | D2 C2 B,4 |"
+    { note: NOTES.A4, duration: QUARTER },
+    { note: NOTES.C5, duration: EIGHTH },
+    { note: NOTES.D5, duration: EIGHTH },
+    { note: NOTES.E5, duration: QUARTER },
+    { note: NOTES.F5, duration: EIGHTH },
+    { note: NOTES.E5, duration: EIGHTH },
+    { note: NOTES.D5, duration: QUARTER },
+    { note: NOTES.C5, duration: QUARTER },
+    { note: NOTES.B4, duration: HALF },
+    // "c2 BA G2 FE | D2 EF G4 |"
+    { note: NOTES.C5, duration: QUARTER },
+    { note: NOTES.B4, duration: EIGHTH },
+    { note: NOTES.A4, duration: EIGHTH },
+    { note: NOTES.G4, duration: QUARTER },
+    { note: NOTES.F4, duration: EIGHTH },
+    { note: NOTES.E4, duration: EIGHTH },
+    { note: NOTES.D4, duration: QUARTER },
+    { note: NOTES.E4, duration: EIGHTH },
+    { note: NOTES.F4, duration: EIGHTH },
+    { note: NOTES.G4, duration: HALF },
+    // "A,2 CD E2 DC | B,2 A,2 A,4 |]"
+    { note: NOTES.A4, duration: QUARTER },
+    { note: NOTES.C5, duration: EIGHTH },
+    { note: NOTES.D5, duration: EIGHTH },
+    { note: NOTES.E5, duration: QUARTER },
+    { note: NOTES.D5, duration: EIGHTH },
+    { note: NOTES.C5, duration: EIGHTH },
+    { note: NOTES.B4, duration: QUARTER },
+    { note: NOTES.A4, duration: QUARTER },
+    { note: NOTES.A4, duration: HALF },
+
+    // ========== THEME A VARIATION (8 bars) - Ornamented ==========
+    // Higher octave, more movement
+    { note: NOTES.A5, duration: EIGHTH },
+    { note: NOTES.G5, duration: EIGHTH },
+    { note: NOTES.A5, duration: EIGHTH },
+    { note: NOTES.C5, duration: EIGHTH },
+    { note: NOTES.D5, duration: EIGHTH },
+    { note: NOTES.E5, duration: EIGHTH },
+    { note: NOTES.E5, duration: QUARTER },
+    { note: NOTES.D5, duration: EIGHTH },
+    { note: NOTES.C5, duration: EIGHTH },
+    { note: NOTES.B4, duration: QUARTER },
+    { note: NOTES.A4, duration: EIGHTH },
+    { note: NOTES.G4, duration: EIGHTH },
+    { note: NOTES.A4, duration: HALF },
+    // Variation line 2
+    { note: NOTES.A5, duration: EIGHTH },
+    { note: NOTES.G5, duration: EIGHTH },
+    { note: NOTES.A5, duration: EIGHTH },
+    { note: NOTES.C5, duration: EIGHTH },
+    { note: NOTES.D5, duration: EIGHTH },
+    { note: NOTES.E5, duration: EIGHTH },
+    { note: NOTES.F5, duration: QUARTER },
+    { note: NOTES.E5, duration: EIGHTH },
+    { note: NOTES.D5, duration: EIGHTH },
+    { note: NOTES.C5, duration: QUARTER },
+    { note: NOTES.B4, duration: HALF },
+    // Counter melody
+    { note: NOTES.C5, duration: EIGHTH },
+    { note: NOTES.D5, duration: EIGHTH },
+    { note: NOTES.C5, duration: EIGHTH },
+    { note: NOTES.B4, duration: EIGHTH },
+    { note: NOTES.A4, duration: EIGHTH },
+    { note: NOTES.G4, duration: EIGHTH },
+    { note: NOTES.G4, duration: QUARTER },
+    { note: NOTES.F4, duration: EIGHTH },
+    { note: NOTES.E4, duration: EIGHTH },
+    { note: NOTES.D4, duration: QUARTER },
+    { note: NOTES.E4, duration: EIGHTH },
+    { note: NOTES.F4, duration: EIGHTH },
+    { note: NOTES.G4, duration: HALF },
+    // Resolution
+    { note: NOTES.A4, duration: EIGHTH },
+    { note: NOTES.B4, duration: EIGHTH },
+    { note: NOTES.C5, duration: EIGHTH },
+    { note: NOTES.D5, duration: EIGHTH },
+    { note: NOTES.E5, duration: QUARTER },
+    { note: NOTES.D5, duration: EIGHTH },
+    { note: NOTES.C5, duration: EIGHTH },
+    { note: NOTES.B4, duration: QUARTER },
+    { note: NOTES.A4, duration: QUARTER },
+    { note: NOTES.A4, duration: HALF },
+
+    // ========== THEME B (8 bars) - Contrasting section ==========
+    // "d2 cd e2 dc | d2 A2 A4 |"
+    { note: NOTES.D5, duration: QUARTER },
+    { note: NOTES.C5, duration: EIGHTH },
+    { note: NOTES.D5, duration: EIGHTH },
+    { note: NOTES.E5, duration: QUARTER },
+    { note: NOTES.D5, duration: EIGHTH },
+    { note: NOTES.C5, duration: EIGHTH },
+    { note: NOTES.D5, duration: QUARTER },
+    { note: NOTES.A4, duration: QUARTER },
+    { note: NOTES.A4, duration: HALF },
+    // "G2 AB c2 BA | G2 E2 E4 |"
+    { note: NOTES.G4, duration: QUARTER },
+    { note: NOTES.A4, duration: EIGHTH },
+    { note: NOTES.B4, duration: EIGHTH },
+    { note: NOTES.C5, duration: QUARTER },
+    { note: NOTES.B4, duration: EIGHTH },
+    { note: NOTES.A4, duration: EIGHTH },
+    { note: NOTES.G4, duration: QUARTER },
+    { note: NOTES.E4, duration: QUARTER },
+    { note: NOTES.E4, duration: HALF },
+    // "A2 cd e2 fe | d2 c2 B4 |"
+    { note: NOTES.A4, duration: QUARTER },
+    { note: NOTES.C5, duration: EIGHTH },
+    { note: NOTES.D5, duration: EIGHTH },
+    { note: NOTES.E5, duration: QUARTER },
+    { note: NOTES.F5, duration: EIGHTH },
+    { note: NOTES.E5, duration: EIGHTH },
+    { note: NOTES.D5, duration: QUARTER },
+    { note: NOTES.C5, duration: QUARTER },
+    { note: NOTES.B4, duration: HALF },
+    // "d2 cB A2 GF | E2 A2 A4 |]"
+    { note: NOTES.D5, duration: QUARTER },
+    { note: NOTES.C5, duration: EIGHTH },
+    { note: NOTES.B4, duration: EIGHTH },
+    { note: NOTES.A4, duration: QUARTER },
+    { note: NOTES.G4, duration: EIGHTH },
+    { note: NOTES.F4, duration: EIGHTH },
+    { note: NOTES.E4, duration: QUARTER },
+    { note: NOTES.A4, duration: QUARTER },
+    { note: NOTES.A4, duration: HALF },
+
+    // ========== BREAKDOWN (8 bars) - Sparse, atmospheric ==========
+    { note: NOTES.A4, duration: WHOLE },
+    { note: null, duration: WHOLE },
+    { note: NOTES.E5, duration: HALF },
+    { note: NOTES.D5, duration: HALF },
+    { note: NOTES.C5, duration: WHOLE },
+    // Building tension
+    { note: NOTES.E4, duration: QUARTER },
+    { note: null, duration: QUARTER },
+    { note: NOTES.A4, duration: QUARTER },
+    { note: null, duration: QUARTER },
+    { note: NOTES.C5, duration: QUARTER },
+    { note: null, duration: QUARTER },
+    { note: NOTES.E5, duration: QUARTER },
+    { note: null, duration: QUARTER },
+    { note: NOTES.E5, duration: EIGHTH },
+    { note: NOTES.D5, duration: EIGHTH },
+    { note: NOTES.C5, duration: EIGHTH },
+    { note: NOTES.B4, duration: EIGHTH },
+    { note: NOTES.A4, duration: EIGHTH },
+    { note: NOTES.G4, duration: EIGHTH },
+    { note: NOTES.E4, duration: QUARTER },
+    { note: NOTES.E4, duration: EIGHTH },
+    { note: NOTES.G4, duration: EIGHTH },
+    { note: NOTES.A4, duration: EIGHTH },
+    { note: NOTES.B4, duration: EIGHTH },
+    { note: NOTES.C5, duration: EIGHTH },
+    { note: NOTES.D5, duration: EIGHTH },
+    { note: NOTES.E5, duration: QUARTER },
+
+    // ========== FINAL VARIATION (8 bars) - Triumphant return ==========
+    // Full energy reprise
+    { note: NOTES.A4, duration: EIGHTH },
+    { note: NOTES.A4, duration: EIGHTH },
+    { note: NOTES.C5, duration: EIGHTH },
+    { note: NOTES.D5, duration: EIGHTH },
+    { note: NOTES.E5, duration: QUARTER },
+    { note: NOTES.D5, duration: EIGHTH },
+    { note: NOTES.C5, duration: EIGHTH },
+    { note: NOTES.B4, duration: QUARTER },
+    { note: NOTES.A4, duration: EIGHTH },
+    { note: NOTES.G4, duration: EIGHTH },
+    { note: NOTES.A4, duration: HALF },
+    { note: NOTES.A4, duration: EIGHTH },
+    { note: NOTES.A4, duration: EIGHTH },
+    { note: NOTES.C5, duration: EIGHTH },
+    { note: NOTES.D5, duration: EIGHTH },
+    { note: NOTES.E5, duration: QUARTER },
+    { note: NOTES.F5, duration: EIGHTH },
+    { note: NOTES.E5, duration: EIGHTH },
+    { note: NOTES.D5, duration: QUARTER },
+    { note: NOTES.C5, duration: QUARTER },
+    { note: NOTES.B4, duration: HALF },
+    { note: NOTES.C5, duration: QUARTER },
+    { note: NOTES.B4, duration: EIGHTH },
+    { note: NOTES.A4, duration: EIGHTH },
+    { note: NOTES.G4, duration: QUARTER },
+    { note: NOTES.F4, duration: EIGHTH },
+    { note: NOTES.E4, duration: EIGHTH },
+    { note: NOTES.D4, duration: QUARTER },
+    { note: NOTES.E4, duration: EIGHTH },
+    { note: NOTES.F4, duration: EIGHTH },
+    { note: NOTES.G4, duration: HALF },
+    // Grand finale phrase
+    { note: NOTES.A4, duration: EIGHTH },
+    { note: NOTES.C5, duration: EIGHTH },
+    { note: NOTES.E5, duration: QUARTER },
+    { note: NOTES.E5, duration: QUARTER },
+    { note: NOTES.D5, duration: EIGHTH },
+    { note: NOTES.C5, duration: EIGHTH },
+    { note: NOTES.B4, duration: QUARTER },
+    { note: NOTES.A4, duration: QUARTER },
+    { note: NOTES.A4, duration: HALF },
+
+    // ========== ENDING (2 bars) ==========
+    { note: NOTES.A4, duration: QUARTER },
+    { note: NOTES.C5, duration: QUARTER },
+    { note: NOTES.E5, duration: QUARTER },
+    { note: NOTES.A5, duration: QUARTER },
+    { note: NOTES.A4, duration: WHOLE },
+  ],
+
+  // Harmony voice - Sustained chord tones for folk feel
+  harmony: [
+    // ========== INTRO ==========
+    { note: NOTES.C4, duration: WHOLE },
+    { note: NOTES.E4, duration: WHOLE },
+    { note: NOTES.C4, duration: WHOLE },
+    { note: NOTES.B3, duration: WHOLE },
+    { note: NOTES.A3, duration: WHOLE },
+    { note: NOTES.G3, duration: WHOLE },
+    { note: NOTES.C4, duration: WHOLE },
+    { note: NOTES.E4, duration: WHOLE },
+
+    // ========== THEME A ==========
+    // Am
+    { note: NOTES.E4, duration: WHOLE },
+    { note: NOTES.C4, duration: WHOLE },
+    // G
+    { note: NOTES.D4, duration: WHOLE },
+    { note: NOTES.B3, duration: WHOLE },
+    // F
+    { note: NOTES.C4, duration: WHOLE },
+    { note: NOTES.A3, duration: WHOLE },
+    // E
+    { note: NOTES.B3, duration: WHOLE },
+    { note: NOTES.G3, duration: WHOLE },
+
+    // ========== THEME A VARIATION ==========
+    { note: NOTES.E4, duration: HALF },
+    { note: NOTES.C4, duration: HALF },
+    { note: NOTES.E4, duration: HALF },
+    { note: NOTES.C4, duration: HALF },
+    { note: NOTES.D4, duration: HALF },
+    { note: NOTES.B3, duration: HALF },
+    { note: NOTES.D4, duration: HALF },
+    { note: NOTES.B3, duration: HALF },
+    { note: NOTES.C4, duration: HALF },
+    { note: NOTES.A3, duration: HALF },
+    { note: NOTES.C4, duration: HALF },
+    { note: NOTES.A3, duration: HALF },
+    { note: NOTES.B3, duration: HALF },
+    { note: NOTES.G3, duration: HALF },
+    { note: NOTES.B3, duration: WHOLE },
+
+    // ========== THEME B ==========
+    // Dm
+    { note: NOTES.F4, duration: WHOLE },
+    { note: NOTES.A3, duration: WHOLE },
+    // G -> C
+    { note: NOTES.D4, duration: WHOLE },
+    { note: NOTES.E4, duration: WHOLE },
+    // Am
+    { note: NOTES.C4, duration: WHOLE },
+    { note: NOTES.F4, duration: WHOLE },
+    // E -> Am
+    { note: NOTES.G3, duration: WHOLE },
+    { note: NOTES.E4, duration: WHOLE },
+
+    // ========== BREAKDOWN ==========
+    { note: NOTES.E4, duration: WHOLE },
+    { note: null, duration: WHOLE },
+    { note: NOTES.C4, duration: WHOLE },
+    { note: null, duration: WHOLE },
+    { note: NOTES.E4, duration: WHOLE },
+    { note: NOTES.D4, duration: WHOLE },
+    { note: NOTES.C4, duration: WHOLE },
+    { note: NOTES.B3, duration: WHOLE },
+
+    // ========== FINAL VARIATION ==========
+    { note: NOTES.E4, duration: HALF },
+    { note: NOTES.C4, duration: HALF },
+    { note: NOTES.E4, duration: HALF },
+    { note: NOTES.C4, duration: HALF },
+    { note: NOTES.D4, duration: HALF },
+    { note: NOTES.B3, duration: HALF },
+    { note: NOTES.D4, duration: HALF },
+    { note: NOTES.B3, duration: HALF },
+    { note: NOTES.C4, duration: HALF },
+    { note: NOTES.A3, duration: HALF },
+    { note: NOTES.C4, duration: HALF },
+    { note: NOTES.A3, duration: HALF },
+    { note: NOTES.B3, duration: HALF },
+    { note: NOTES.G3, duration: HALF },
+    { note: NOTES.E4, duration: WHOLE },
+
+    // ========== ENDING ==========
+    { note: NOTES.E4, duration: HALF },
+    { note: NOTES.C4, duration: HALF },
+    { note: NOTES.E4, duration: WHOLE },
+  ],
+
+  // Arpeggio voice - Folk-style broken chords
+  arpeggio: [
+    // ========== INTRO - Gentle arpeggios ==========
+    // Am arpeggio
+    { note: NOTES.A3, duration: EIGHTH },
+    { note: NOTES.C4, duration: EIGHTH },
+    { note: NOTES.E4, duration: EIGHTH },
+    { note: NOTES.A4, duration: EIGHTH },
+    { note: NOTES.E4, duration: EIGHTH },
+    { note: NOTES.C4, duration: EIGHTH },
+    { note: NOTES.A3, duration: EIGHTH },
+    { note: NOTES.E3, duration: EIGHTH },
+    // Repeat
+    { note: NOTES.A3, duration: EIGHTH },
+    { note: NOTES.C4, duration: EIGHTH },
+    { note: NOTES.E4, duration: EIGHTH },
+    { note: NOTES.A4, duration: EIGHTH },
+    { note: NOTES.E4, duration: EIGHTH },
+    { note: NOTES.C4, duration: EIGHTH },
+    { note: NOTES.A3, duration: EIGHTH },
+    { note: NOTES.E3, duration: EIGHTH },
+    // G arpeggio
+    { note: NOTES.G3, duration: EIGHTH },
+    { note: NOTES.B3, duration: EIGHTH },
+    { note: NOTES.D4, duration: EIGHTH },
+    { note: NOTES.G4, duration: EIGHTH },
+    { note: NOTES.D4, duration: EIGHTH },
+    { note: NOTES.B3, duration: EIGHTH },
+    { note: NOTES.G3, duration: EIGHTH },
+    { note: NOTES.D3, duration: EIGHTH },
+    { note: NOTES.G3, duration: EIGHTH },
+    { note: NOTES.B3, duration: EIGHTH },
+    { note: NOTES.D4, duration: EIGHTH },
+    { note: NOTES.G4, duration: EIGHTH },
+    { note: NOTES.D4, duration: EIGHTH },
+    { note: NOTES.B3, duration: EIGHTH },
+    { note: NOTES.G3, duration: EIGHTH },
+    { note: NOTES.D3, duration: EIGHTH },
+    // F arpeggio
+    { note: NOTES.F3, duration: EIGHTH },
+    { note: NOTES.A3, duration: EIGHTH },
+    { note: NOTES.C4, duration: EIGHTH },
+    { note: NOTES.F4, duration: EIGHTH },
+    { note: NOTES.C4, duration: EIGHTH },
+    { note: NOTES.A3, duration: EIGHTH },
+    { note: NOTES.F3, duration: EIGHTH },
+    { note: NOTES.C3, duration: EIGHTH },
+    // E arpeggio
+    { note: NOTES.E3, duration: EIGHTH },
+    { note: NOTES.G3, duration: EIGHTH },
+    { note: NOTES.B3, duration: EIGHTH },
+    { note: NOTES.E4, duration: EIGHTH },
+    { note: NOTES.B3, duration: EIGHTH },
+    { note: NOTES.G3, duration: EIGHTH },
+    { note: NOTES.E3, duration: EIGHTH },
+    { note: NOTES.B2, duration: EIGHTH },
+    // Am resolve
+    { note: NOTES.A3, duration: EIGHTH },
+    { note: NOTES.C4, duration: EIGHTH },
+    { note: NOTES.E4, duration: EIGHTH },
+    { note: NOTES.A4, duration: EIGHTH },
+    { note: NOTES.E4, duration: EIGHTH },
+    { note: NOTES.C4, duration: EIGHTH },
+    { note: NOTES.A3, duration: EIGHTH },
+    { note: NOTES.E3, duration: EIGHTH },
+    { note: NOTES.A3, duration: EIGHTH },
+    { note: NOTES.E4, duration: EIGHTH },
+    { note: NOTES.A4, duration: EIGHTH },
+    { note: NOTES.E4, duration: EIGHTH },
+    { note: NOTES.A3, duration: QUARTER },
+    { note: null, duration: QUARTER },
+
+    // ========== THEME A - March-style arpeggios ==========
+    // Am pattern x2
+    { note: NOTES.A3, duration: SIXTEENTH },
+    { note: NOTES.C4, duration: SIXTEENTH },
+    { note: NOTES.E4, duration: SIXTEENTH },
+    { note: NOTES.A4, duration: SIXTEENTH },
+    { note: NOTES.E4, duration: SIXTEENTH },
+    { note: NOTES.C4, duration: SIXTEENTH },
+    { note: NOTES.A3, duration: SIXTEENTH },
+    { note: NOTES.C4, duration: SIXTEENTH },
+    { note: NOTES.A3, duration: SIXTEENTH },
+    { note: NOTES.C4, duration: SIXTEENTH },
+    { note: NOTES.E4, duration: SIXTEENTH },
+    { note: NOTES.A4, duration: SIXTEENTH },
+    { note: NOTES.E4, duration: SIXTEENTH },
+    { note: NOTES.C4, duration: SIXTEENTH },
+    { note: NOTES.A3, duration: SIXTEENTH },
+    { note: NOTES.C4, duration: SIXTEENTH },
+    { note: NOTES.A3, duration: SIXTEENTH },
+    { note: NOTES.C4, duration: SIXTEENTH },
+    { note: NOTES.E4, duration: SIXTEENTH },
+    { note: NOTES.A4, duration: SIXTEENTH },
+    { note: NOTES.E4, duration: SIXTEENTH },
+    { note: NOTES.C4, duration: SIXTEENTH },
+    { note: NOTES.A3, duration: SIXTEENTH },
+    { note: NOTES.C4, duration: SIXTEENTH },
+    { note: NOTES.A3, duration: SIXTEENTH },
+    { note: NOTES.C4, duration: SIXTEENTH },
+    { note: NOTES.E4, duration: SIXTEENTH },
+    { note: NOTES.A4, duration: SIXTEENTH },
+    { note: NOTES.E4, duration: SIXTEENTH },
+    { note: NOTES.C4, duration: SIXTEENTH },
+    { note: NOTES.A3, duration: SIXTEENTH },
+    { note: NOTES.C4, duration: SIXTEENTH },
+    // G pattern x2
+    { note: NOTES.G3, duration: SIXTEENTH },
+    { note: NOTES.B3, duration: SIXTEENTH },
+    { note: NOTES.D4, duration: SIXTEENTH },
+    { note: NOTES.G4, duration: SIXTEENTH },
+    { note: NOTES.D4, duration: SIXTEENTH },
+    { note: NOTES.B3, duration: SIXTEENTH },
+    { note: NOTES.G3, duration: SIXTEENTH },
+    { note: NOTES.B3, duration: SIXTEENTH },
+    { note: NOTES.G3, duration: SIXTEENTH },
+    { note: NOTES.B3, duration: SIXTEENTH },
+    { note: NOTES.D4, duration: SIXTEENTH },
+    { note: NOTES.G4, duration: SIXTEENTH },
+    { note: NOTES.D4, duration: SIXTEENTH },
+    { note: NOTES.B3, duration: SIXTEENTH },
+    { note: NOTES.G3, duration: SIXTEENTH },
+    { note: NOTES.B3, duration: SIXTEENTH },
+    { note: NOTES.G3, duration: SIXTEENTH },
+    { note: NOTES.B3, duration: SIXTEENTH },
+    { note: NOTES.D4, duration: SIXTEENTH },
+    { note: NOTES.G4, duration: SIXTEENTH },
+    { note: NOTES.D4, duration: SIXTEENTH },
+    { note: NOTES.B3, duration: SIXTEENTH },
+    { note: NOTES.G3, duration: SIXTEENTH },
+    { note: NOTES.B3, duration: SIXTEENTH },
+    { note: NOTES.G3, duration: SIXTEENTH },
+    { note: NOTES.B3, duration: SIXTEENTH },
+    { note: NOTES.D4, duration: SIXTEENTH },
+    { note: NOTES.G4, duration: SIXTEENTH },
+    { note: NOTES.D4, duration: SIXTEENTH },
+    { note: NOTES.B3, duration: SIXTEENTH },
+    { note: NOTES.G3, duration: SIXTEENTH },
+    { note: NOTES.B3, duration: SIXTEENTH },
+    // F pattern x2
+    { note: NOTES.F3, duration: SIXTEENTH },
+    { note: NOTES.A3, duration: SIXTEENTH },
+    { note: NOTES.C4, duration: SIXTEENTH },
+    { note: NOTES.F4, duration: SIXTEENTH },
+    { note: NOTES.C4, duration: SIXTEENTH },
+    { note: NOTES.A3, duration: SIXTEENTH },
+    { note: NOTES.F3, duration: SIXTEENTH },
+    { note: NOTES.A3, duration: SIXTEENTH },
+    { note: NOTES.F3, duration: SIXTEENTH },
+    { note: NOTES.A3, duration: SIXTEENTH },
+    { note: NOTES.C4, duration: SIXTEENTH },
+    { note: NOTES.F4, duration: SIXTEENTH },
+    { note: NOTES.C4, duration: SIXTEENTH },
+    { note: NOTES.A3, duration: SIXTEENTH },
+    { note: NOTES.F3, duration: SIXTEENTH },
+    { note: NOTES.A3, duration: SIXTEENTH },
+    { note: NOTES.F3, duration: SIXTEENTH },
+    { note: NOTES.A3, duration: SIXTEENTH },
+    { note: NOTES.C4, duration: SIXTEENTH },
+    { note: NOTES.F4, duration: SIXTEENTH },
+    { note: NOTES.C4, duration: SIXTEENTH },
+    { note: NOTES.A3, duration: SIXTEENTH },
+    { note: NOTES.F3, duration: SIXTEENTH },
+    { note: NOTES.A3, duration: SIXTEENTH },
+    { note: NOTES.F3, duration: SIXTEENTH },
+    { note: NOTES.A3, duration: SIXTEENTH },
+    { note: NOTES.C4, duration: SIXTEENTH },
+    { note: NOTES.F4, duration: SIXTEENTH },
+    { note: NOTES.C4, duration: SIXTEENTH },
+    { note: NOTES.A3, duration: SIXTEENTH },
+    { note: NOTES.F3, duration: SIXTEENTH },
+    { note: NOTES.A3, duration: SIXTEENTH },
+    // E pattern
+    { note: NOTES.E3, duration: SIXTEENTH },
+    { note: NOTES.G3, duration: SIXTEENTH },
+    { note: NOTES.B3, duration: SIXTEENTH },
+    { note: NOTES.E4, duration: SIXTEENTH },
+    { note: NOTES.B3, duration: SIXTEENTH },
+    { note: NOTES.G3, duration: SIXTEENTH },
+    { note: NOTES.E3, duration: SIXTEENTH },
+    { note: NOTES.G3, duration: SIXTEENTH },
+    { note: NOTES.E3, duration: SIXTEENTH },
+    { note: NOTES.G3, duration: SIXTEENTH },
+    { note: NOTES.B3, duration: SIXTEENTH },
+    { note: NOTES.E4, duration: SIXTEENTH },
+    { note: NOTES.B3, duration: SIXTEENTH },
+    { note: NOTES.G3, duration: SIXTEENTH },
+    { note: NOTES.E3, duration: SIXTEENTH },
+    { note: NOTES.G3, duration: SIXTEENTH },
+    { note: NOTES.E3, duration: SIXTEENTH },
+    { note: NOTES.G3, duration: SIXTEENTH },
+    { note: NOTES.B3, duration: SIXTEENTH },
+    { note: NOTES.E4, duration: SIXTEENTH },
+    { note: NOTES.B3, duration: SIXTEENTH },
+    { note: NOTES.G3, duration: SIXTEENTH },
+    { note: NOTES.E3, duration: EIGHTH },
+  ],
+
+  // Drums - March-style beat
+  drums: [
+    // ========== INTRO - Building ==========
+    { type: KICK, duration: QUARTER },
+    { type: HIHAT, duration: QUARTER },
+    { type: SNARE, duration: QUARTER },
+    { type: HIHAT, duration: QUARTER },
+    { type: KICK, duration: QUARTER },
+    { type: HIHAT, duration: QUARTER },
+    { type: SNARE, duration: QUARTER },
+    { type: HIHAT, duration: QUARTER },
+    // March pattern
+    { type: KICK, duration: QUARTER },
+    { type: HIHAT, duration: EIGHTH },
+    { type: HIHAT, duration: EIGHTH },
+    { type: SNARE, duration: QUARTER },
+    { type: HIHAT, duration: EIGHTH },
+    { type: HIHAT, duration: EIGHTH },
+    { type: KICK, duration: QUARTER },
+    { type: HIHAT, duration: EIGHTH },
+    { type: HIHAT, duration: EIGHTH },
+    { type: SNARE, duration: QUARTER },
+    { type: HIHAT, duration: EIGHTH },
+    { type: HIHAT, duration: EIGHTH },
+    // More intensity
+    { type: KICK, duration: EIGHTH },
+    { type: KICK, duration: EIGHTH },
+    { type: HIHAT, duration: EIGHTH },
+    { type: HIHAT, duration: EIGHTH },
+    { type: SNARE, duration: QUARTER },
+    { type: HIHAT, duration: EIGHTH },
+    { type: HIHAT, duration: EIGHTH },
+    { type: KICK, duration: EIGHTH },
+    { type: KICK, duration: EIGHTH },
+    { type: HIHAT, duration: EIGHTH },
+    { type: HIHAT, duration: EIGHTH },
+    { type: SNARE, duration: QUARTER },
+    { type: SNARE, duration: EIGHTH },
+    { type: SNARE, duration: EIGHTH },
+
+    // ========== THEME A - Full march ==========
+    { type: KICK, duration: EIGHTH },
+    { type: HIHAT, duration: EIGHTH },
+    { type: KICK, duration: EIGHTH },
+    { type: HIHAT, duration: EIGHTH },
+    { type: SNARE, duration: EIGHTH },
+    { type: HIHAT, duration: EIGHTH },
+    { type: KICK, duration: EIGHTH },
+    { type: HIHAT, duration: EIGHTH },
+    { type: KICK, duration: EIGHTH },
+    { type: HIHAT, duration: EIGHTH },
+    { type: KICK, duration: EIGHTH },
+    { type: HIHAT, duration: EIGHTH },
+    { type: SNARE, duration: EIGHTH },
+    { type: HIHAT, duration: EIGHTH },
+    { type: KICK, duration: EIGHTH },
+    { type: HIHAT, duration: EIGHTH },
+    // Repeat
+    { type: KICK, duration: EIGHTH },
+    { type: HIHAT, duration: EIGHTH },
+    { type: KICK, duration: EIGHTH },
+    { type: HIHAT, duration: EIGHTH },
+    { type: SNARE, duration: EIGHTH },
+    { type: HIHAT, duration: EIGHTH },
+    { type: KICK, duration: EIGHTH },
+    { type: HIHAT, duration: EIGHTH },
+    { type: KICK, duration: EIGHTH },
+    { type: HIHAT, duration: EIGHTH },
+    { type: KICK, duration: EIGHTH },
+    { type: HIHAT, duration: EIGHTH },
+    { type: SNARE, duration: EIGHTH },
+    { type: SNARE, duration: EIGHTH },
+    { type: SNARE, duration: EIGHTH },
+    { type: SNARE, duration: EIGHTH },
+  ],
+};
+
+// Type C: Flowing/gentle melody
+// F major key, smoother and more melodic
+export const TRACK_TYPE_C = {
+  bpm: 130,
+  key: 'F',
+
+  bass: [
+    // Flowing F major bass
+    { note: NOTES.F2, duration: QUARTER },
+    { note: NOTES.A2, duration: QUARTER },
+    { note: NOTES.C3, duration: QUARTER },
+    { note: NOTES.F2, duration: QUARTER },
+    // Bb
+    { note: NOTES.B2, duration: QUARTER },
+    { note: NOTES.F2, duration: QUARTER },
+    { note: NOTES.B2, duration: QUARTER },
+    { note: NOTES.F3, duration: QUARTER },
+    // C major
+    { note: NOTES.C3, duration: QUARTER },
+    { note: NOTES.E3, duration: QUARTER },
+    { note: NOTES.G3, duration: QUARTER },
+    { note: NOTES.C3, duration: QUARTER },
+    // F resolve
+    { note: NOTES.F2, duration: QUARTER },
+    { note: NOTES.C3, duration: QUARTER },
+    { note: NOTES.A2, duration: QUARTER },
+    { note: NOTES.F2, duration: QUARTER },
+    // Dm
+    { note: NOTES.D3, duration: QUARTER },
+    { note: NOTES.F3, duration: QUARTER },
+    { note: NOTES.A2, duration: QUARTER },
+    { note: NOTES.D3, duration: QUARTER },
+    // G minor
+    { note: NOTES.G2, duration: QUARTER },
+    { note: NOTES.B2, duration: QUARTER },
+    { note: NOTES.D3, duration: QUARTER },
+    { note: NOTES.G2, duration: QUARTER },
+    // C to F
+    { note: NOTES.C3, duration: QUARTER },
+    { note: NOTES.G2, duration: QUARTER },
+    { note: NOTES.F2, duration: HALF },
+  ],
+
+  lead: [
+    // Bar 1: Rising F major scale
+    { note: NOTES.F4, duration: QUARTER },
+    { note: NOTES.G4, duration: QUARTER },
+    { note: NOTES.A4, duration: QUARTER },
+    { note: NOTES.C5, duration: QUARTER },
+    // Bar 2: Gentle descent
+    { note: NOTES.D5, duration: QUARTER },
+    { note: NOTES.C5, duration: QUARTER },
+    { note: NOTES.A4, duration: QUARTER },
+    { note: NOTES.G4, duration: QUARTER },
+    // Bar 3: Melodic phrase
+    { note: NOTES.F4, duration: QUARTER },
+    { note: NOTES.A4, duration: QUARTER },
+    { note: NOTES.C5, duration: QUARTER },
+    { note: NOTES.F5, duration: QUARTER },
+    // Bar 4: Resolution
+    { note: NOTES.E5, duration: QUARTER },
+    { note: NOTES.D5, duration: QUARTER },
+    { note: NOTES.C5, duration: HALF },
+    // Bar 5: Second phrase - higher
+    { note: NOTES.A4, duration: QUARTER },
+    { note: NOTES.C5, duration: QUARTER },
+    { note: NOTES.F5, duration: QUARTER },
+    { note: NOTES.E5, duration: QUARTER },
+    // Bar 6: Flowing
+    { note: NOTES.D5, duration: QUARTER },
+    { note: NOTES.E5, duration: QUARTER },
+    { note: NOTES.F5, duration: QUARTER },
+    { note: NOTES.G5, duration: QUARTER },
+    // Bar 7: Gentle descent
+    { note: NOTES.A5, duration: QUARTER },
+    { note: NOTES.G5, duration: QUARTER },
+    { note: NOTES.F5, duration: QUARTER },
+    { note: NOTES.E5, duration: QUARTER },
+    // Bar 8: Final cadence
+    { note: NOTES.D5, duration: QUARTER },
+    { note: NOTES.C5, duration: QUARTER },
+    { note: NOTES.A4, duration: QUARTER },
+    { note: NOTES.F4, duration: QUARTER },
+  ],
+
+  harmony: [
+    // F major sustained
+    { note: NOTES.A4, duration: WHOLE },
+    { note: NOTES.C5, duration: WHOLE },
+    // Bb
+    { note: NOTES.D5, duration: WHOLE },
+    { note: NOTES.F4, duration: WHOLE },
+    // C major
+    { note: NOTES.E4, duration: WHOLE },
+    { note: NOTES.G4, duration: WHOLE },
+    // F resolve
+    { note: NOTES.A4, duration: WHOLE },
+    { note: NOTES.C5, duration: WHOLE },
+  ],
+
+  arpeggio: [
+    // F major gentle arpeggio
+    { note: NOTES.F3, duration: EIGHTH },
+    { note: NOTES.A3, duration: EIGHTH },
+    { note: NOTES.C4, duration: EIGHTH },
+    { note: NOTES.F4, duration: EIGHTH },
+    { note: NOTES.C4, duration: EIGHTH },
+    { note: NOTES.A3, duration: EIGHTH },
+    { note: NOTES.F3, duration: EIGHTH },
+    { note: NOTES.C3, duration: EIGHTH },
+    // Repeat
+    { note: NOTES.F3, duration: EIGHTH },
+    { note: NOTES.A3, duration: EIGHTH },
+    { note: NOTES.C4, duration: EIGHTH },
+    { note: NOTES.A3, duration: EIGHTH },
+    { note: NOTES.F3, duration: EIGHTH },
+    { note: NOTES.A3, duration: EIGHTH },
+    { note: NOTES.C4, duration: EIGHTH },
+    { note: NOTES.F4, duration: EIGHTH },
+    // Bb arpeggio
+    { note: NOTES.B3, duration: EIGHTH },
+    { note: NOTES.D4, duration: EIGHTH },
+    { note: NOTES.F4, duration: EIGHTH },
+    { note: NOTES.B4, duration: EIGHTH },
+    { note: NOTES.F4, duration: EIGHTH },
+    { note: NOTES.D4, duration: EIGHTH },
+    { note: NOTES.B3, duration: EIGHTH },
+    { note: NOTES.F3, duration: EIGHTH },
+    // Repeat Bb
+    { note: NOTES.B3, duration: EIGHTH },
+    { note: NOTES.D4, duration: EIGHTH },
+    { note: NOTES.F4, duration: EIGHTH },
+    { note: NOTES.D4, duration: EIGHTH },
+    { note: NOTES.B3, duration: EIGHTH },
+    { note: NOTES.D4, duration: EIGHTH },
+    { note: NOTES.F4, duration: EIGHTH },
+    { note: NOTES.B4, duration: EIGHTH },
+    // C major
+    { note: NOTES.C3, duration: EIGHTH },
+    { note: NOTES.E3, duration: EIGHTH },
+    { note: NOTES.G3, duration: EIGHTH },
+    { note: NOTES.C4, duration: EIGHTH },
+    { note: NOTES.G3, duration: EIGHTH },
+    { note: NOTES.E3, duration: EIGHTH },
+    { note: NOTES.C3, duration: EIGHTH },
+    { note: NOTES.G2, duration: EIGHTH },
+    // Repeat C
+    { note: NOTES.C3, duration: EIGHTH },
+    { note: NOTES.E3, duration: EIGHTH },
+    { note: NOTES.G3, duration: EIGHTH },
+    { note: NOTES.E3, duration: EIGHTH },
+    { note: NOTES.C3, duration: EIGHTH },
+    { note: NOTES.E3, duration: EIGHTH },
+    { note: NOTES.G3, duration: EIGHTH },
+    { note: NOTES.C4, duration: EIGHTH },
+    // F resolve
+    { note: NOTES.F3, duration: EIGHTH },
+    { note: NOTES.A3, duration: EIGHTH },
+    { note: NOTES.C4, duration: EIGHTH },
+    { note: NOTES.F4, duration: EIGHTH },
+    { note: NOTES.C4, duration: EIGHTH },
+    { note: NOTES.A3, duration: EIGHTH },
+    { note: NOTES.F3, duration: EIGHTH },
+    { note: NOTES.C3, duration: EIGHTH },
+    // Final F
+    { note: NOTES.F3, duration: EIGHTH },
+    { note: NOTES.C4, duration: EIGHTH },
+    { note: NOTES.F4, duration: EIGHTH },
+    { note: NOTES.A4, duration: EIGHTH },
+    { note: NOTES.F4, duration: EIGHTH },
+    { note: NOTES.C4, duration: EIGHTH },
+    { note: NOTES.A3, duration: EIGHTH },
+    { note: NOTES.F3, duration: EIGHTH },
+  ],
+
+  drums: [
+    // Gentler pattern
+    { type: KICK, duration: QUARTER },
+    { type: HIHAT, duration: EIGHTH },
+    { type: HIHAT, duration: EIGHTH },
+    { type: SNARE, duration: QUARTER },
+    { type: HIHAT, duration: EIGHTH },
+    { type: HIHAT, duration: EIGHTH },
+    // Variation
+    { type: KICK, duration: QUARTER },
+    { type: HIHAT, duration: EIGHTH },
+    { type: HIHAT, duration: EIGHTH },
+    { type: SNARE, duration: EIGHTH },
+    { type: KICK, duration: EIGHTH },
+    { type: HIHAT, duration: QUARTER },
+  ],
+};
+
+// Intensity layer configuration
+// Defines which layers play at each intensity level
+export const INTENSITY_LAYERS = {
+  1: ['bass', 'lead'],
+  2: ['bass', 'lead'],
+  3: ['bass', 'lead'],
+  4: ['bass', 'lead', 'harmony'],
+  5: ['bass', 'lead', 'harmony'],
+  6: ['bass', 'lead', 'harmony'],
+  7: ['bass', 'lead', 'harmony', 'arpeggio'],
+  8: ['bass', 'lead', 'harmony', 'arpeggio'],
+  9: ['bass', 'lead', 'harmony', 'arpeggio'],
+  10: ['bass', 'lead', 'harmony', 'arpeggio', 'drums'],
+};
+
+// Filter settings per intensity level
+// Higher intensity = higher filter cutoff (more open sound)
+export const INTENSITY_FILTER = {
+  1: { cutoff: 800, resonance: 1 },
+  2: { cutoff: 900, resonance: 1 },
+  3: { cutoff: 1000, resonance: 1.2 },
+  4: { cutoff: 1200, resonance: 1.2 },
+  5: { cutoff: 1500, resonance: 1.5 },
+  6: { cutoff: 1800, resonance: 1.5 },
+  7: { cutoff: 2200, resonance: 1.8 },
+  8: { cutoff: 2800, resonance: 1.8 },
+  9: { cutoff: 3500, resonance: 2 },
+  10: { cutoff: 5000, resonance: 2 },
+};
 
 // Track display names for UI
 export const TRACK_NAMES = {
@@ -170,3 +1335,13 @@ export const TRACK_NAMES = {
   B: 'Type B',
   C: 'Type C',
 };
+
+// Get track data by type
+export function getTrackByType(type) {
+  switch (type) {
+    case 'A': return TRACK_TYPE_A;
+    case 'B': return TRACK_TYPE_B;
+    case 'C': return TRACK_TYPE_C;
+    default: return null;
+  }
+}

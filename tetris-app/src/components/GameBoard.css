@@ -49,7 +49,8 @@
 
 .cell.ghost {
   border: 2px dashed;
-  opacity: 0.25;
+  opacity: 0.5;
+  background-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 .cell.current {

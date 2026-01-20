@@ -4,6 +4,7 @@ import { useMusic } from '../hooks/useMusic';
 import { useTheme } from '../hooks/useTheme';
 import { useGameLogic } from '../hooks/useGameLogic';
 import { useKeyBindings } from '../hooks/useKeyBindings';
+import { useGamepad } from '../hooks/useGamepad';
 import { useHighScores } from '../hooks/useHighScores';
 import { Starfield } from './Starfield';
 import { GameBoard } from './GameBoard';
@@ -69,6 +70,55 @@ export function Game() {
   // Derive whether to show high score entry from current state
   // Show if: game over, score qualifies, and user hasn't handled it yet
   const showHighScoreEntry = gameOver && !highScoreHandled && isQualifyingScore(score);
+
+  // Gamepad action handler - defined after useGameLogic so functions are available
+  const handleGamepadAction = useCallback((action) => {
+    // Don't handle gamepad when modals are open
+    if (showSettings || showHighScoreEntry || showLeaderboard) return;
+
+    switch (action) {
+      case 'moveLeft':
+        movePiece(-1, 0);
+        break;
+      case 'moveRight':
+        movePiece(1, 0);
+        break;
+      case 'softDrop':
+        softDrop();
+        break;
+      case 'rotateCW':
+        rotatePiece(1);
+        break;
+      case 'rotateCCW':
+        rotatePiece(-1);
+        break;
+      case 'hardDrop':
+        if (isPlaying && !gameOver) {
+          hardDrop();
+        }
+        break;
+      case 'hold':
+        holdPiece();
+        break;
+      case 'pause':
+        togglePause();
+        break;
+      default:
+        break;
+    }
+  }, [showSettings, showHighScoreEntry, showLeaderboard, movePiece, softDrop, rotatePiece, hardDrop, holdPiece, togglePause, isPlaying, gameOver]);
+
+  // Always pass the handler - it handles modal state internally via early return
+  // This prevents polling restart race conditions when modals open/close
+  const {
+    gamepadConnected,
+    gamepadName,
+    bindings: gamepadBindings,
+    updateBinding: updateGamepadBinding,
+    resetBindings: resetGamepadBindings,
+    isInputBound: isGamepadInputBound,
+    detectNextInput,
+  } = useGamepad(handleGamepadAction);
 
   // Wrap startGame to reset high score state
   const startGame = useCallback(() => {
@@ -179,6 +229,8 @@ export function Game() {
 
     // Game started (transitioned from not playing to playing)
     if (isPlaying && !prev.isPlaying && !isPaused && !gameOver) {
+      // Reset music intensity to level 1 when starting a new game
+      music.setLevel(1);
       music.play();
     }
 
@@ -205,6 +257,13 @@ export function Game() {
     // Update previous state ref
     prevGameStateRef.current = { isPlaying, isPaused, gameOver };
   }, [isPlaying, isPaused, gameOver, music]);
+
+  // Sync music intensity with game level
+  useEffect(() => {
+    if (isPlaying && !isPaused && !gameOver) {
+      music.setLevel(level);
+    }
+  }, [level, isPlaying, isPaused, gameOver, music]);
 
   return (
     <div className="game-container">
@@ -290,6 +349,13 @@ export function Game() {
           isKeyBound={isKeyBound}
           actionLabels={actionLabels}
           onClose={() => setShowSettings(false)}
+          gamepadConnected={gamepadConnected}
+          gamepadName={gamepadName}
+          gamepadBindings={gamepadBindings}
+          updateGamepadBinding={updateGamepadBinding}
+          resetGamepadBindings={resetGamepadBindings}
+          isGamepadInputBound={isGamepadInputBound}
+          detectNextInput={detectNextInput}
         />
       )}
 

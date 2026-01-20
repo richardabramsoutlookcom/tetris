@@ -1,0 +1,365 @@
+.keybindings-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 20, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  backdrop-filter: blur(5px);
+}
+
+.keybindings-modal {
+  background: linear-gradient(135deg, rgba(30, 30, 60, 0.95), rgba(20, 20, 40, 0.95));
+  border: 2px solid rgba(150, 150, 200, 0.4);
+  border-radius: 12px;
+  padding: 30px;
+  min-width: 400px;
+  max-width: 500px;
+  box-shadow: 0 0 40px rgba(100, 100, 200, 0.3), inset 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+.keybindings-modal h2 {
+  margin: 0 0 20px 0;
+  text-align: center;
+  font-size: 24px;
+  letter-spacing: 5px;
+  color: #88f;
+  text-shadow: 0 0 15px #88f;
+}
+
+/* Tab buttons */
+.keybindings-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+
+.tab-button {
+  padding: 10px 25px;
+  font-size: 14px;
+  font-weight: bold;
+  color: rgba(200, 200, 255, 0.6);
+  background: rgba(50, 50, 100, 0.3);
+  border: 2px solid rgba(100, 100, 150, 0.3);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  position: relative;
+}
+
+.tab-button:hover {
+  color: rgba(200, 200, 255, 0.9);
+  background: rgba(60, 60, 120, 0.4);
+  border-color: rgba(120, 120, 170, 0.5);
+}
+
+.tab-button.active {
+  color: #fff;
+  background: rgba(80, 80, 150, 0.5);
+  border-color: rgba(150, 150, 200, 0.6);
+  box-shadow: 0 0 15px rgba(100, 100, 200, 0.3);
+}
+
+.gamepad-connected-dot {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  background: #0f0;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #0f0;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Gamepad status */
+.gamepad-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 15px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.gamepad-status.connected {
+  background: rgba(0, 150, 0, 0.15);
+  border: 1px solid rgba(0, 200, 0, 0.3);
+  color: #8f8;
+}
+
+.gamepad-status.disconnected {
+  background: rgba(150, 100, 0, 0.15);
+  border: 1px solid rgba(200, 150, 0, 0.3);
+  color: #fa8;
+}
+
+.gamepad-status .status-icon {
+  font-size: 18px;
+}
+
+.gamepad-status .status-text {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.keybindings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.keybinding-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background: rgba(50, 50, 100, 0.2);
+  border-radius: 8px;
+  border: 1px solid rgba(100, 100, 150, 0.2);
+}
+
+.action-label {
+  font-size: 14px;
+  color: rgba(200, 200, 255, 0.9);
+  min-width: 100px;
+}
+
+.keys-container {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.key-slot {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.key-button {
+  min-width: 50px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #fff;
+  background: rgba(80, 80, 150, 0.4);
+  border: 2px solid rgba(150, 150, 200, 0.5);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.key-button:hover {
+  background: rgba(100, 100, 180, 0.5);
+  border-color: rgba(180, 180, 255, 0.7);
+}
+
+.key-button.editing {
+  background: rgba(100, 150, 200, 0.5);
+  border-color: #0af;
+  box-shadow: 0 0 15px rgba(0, 170, 255, 0.5);
+  animation: pulse-edit 1s ease-in-out infinite;
+}
+
+.key-button.gamepad-button {
+  background: rgba(80, 120, 80, 0.4);
+  border-color: rgba(100, 180, 100, 0.5);
+}
+
+.key-button.gamepad-button:hover:not(:disabled) {
+  background: rgba(90, 140, 90, 0.5);
+  border-color: rgba(120, 200, 120, 0.7);
+}
+
+.key-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.add-key:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+@keyframes pulse-edit {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.remove-key {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  font-size: 14px;
+  line-height: 1;
+  color: #fff;
+  background: #f55;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.key-slot:hover .remove-key {
+  opacity: 1;
+}
+
+.remove-key:hover {
+  background: #f77;
+}
+
+.add-key {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  font-size: 18px;
+  color: rgba(150, 150, 200, 0.6);
+  background: transparent;
+  border: 2px dashed rgba(100, 100, 150, 0.4);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.add-key:hover {
+  color: #fff;
+  border-color: rgba(150, 150, 200, 0.7);
+  background: rgba(80, 80, 150, 0.2);
+}
+
+.add-key.editing {
+  color: #0af;
+  border-color: #0af;
+  border-style: solid;
+  box-shadow: 0 0 10px rgba(0, 170, 255, 0.3);
+}
+
+.conflict-warning {
+  margin-top: 20px;
+  padding: 15px;
+  background: rgba(255, 80, 80, 0.2);
+  border: 1px solid rgba(255, 100, 100, 0.4);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.conflict-warning p {
+  margin: 0 0 12px 0;
+  color: #faa;
+}
+
+.conflict-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.conflict-buttons button {
+  padding: 8px 20px;
+  font-size: 12px;
+  color: #fff;
+  background: rgba(100, 100, 150, 0.4);
+  border: 1px solid rgba(150, 150, 200, 0.5);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.conflict-buttons button:first-child {
+  background: rgba(200, 80, 80, 0.4);
+  border-color: rgba(255, 100, 100, 0.5);
+}
+
+.conflict-buttons button:hover {
+  background: rgba(120, 120, 170, 0.5);
+}
+
+.editing-hint {
+  margin-top: 20px;
+  padding: 12px;
+  text-align: center;
+  color: #0af;
+  background: rgba(0, 170, 255, 0.1);
+  border: 1px solid rgba(0, 170, 255, 0.3);
+  border-radius: 6px;
+  animation: pulse-hint 2s ease-in-out infinite;
+}
+
+@keyframes pulse-hint {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.cancel-detect {
+  margin-left: 10px;
+  padding: 4px 12px;
+  font-size: 11px;
+  color: #fff;
+  background: rgba(200, 80, 80, 0.4);
+  border: 1px solid rgba(255, 100, 100, 0.5);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancel-detect:hover {
+  background: rgba(220, 100, 100, 0.5);
+}
+
+.keybindings-actions {
+  margin-top: 25px;
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.reset-button,
+.close-button {
+  padding: 12px 30px;
+  font-size: 14px;
+  letter-spacing: 2px;
+  color: #fff;
+  background: linear-gradient(135deg, rgba(100, 100, 200, 0.4), rgba(50, 50, 150, 0.4));
+  border: 2px solid rgba(150, 150, 255, 0.5);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  font-family: inherit;
+}
+
+.reset-button {
+  background: linear-gradient(135deg, rgba(150, 100, 100, 0.4), rgba(100, 50, 50, 0.4));
+  border-color: rgba(255, 150, 150, 0.5);
+}
+
+.reset-button:hover {
+  background: linear-gradient(135deg, rgba(180, 120, 120, 0.5), rgba(130, 70, 70, 0.5));
+  border-color: rgba(255, 180, 180, 0.7);
+}
+
+.close-button:hover {
+  background: linear-gradient(135deg, rgba(120, 120, 220, 0.5), rgba(70, 70, 170, 0.5));
+  border-color: rgba(180, 180, 255, 0.7);
+  box-shadow: 0 0 20px rgba(100, 100, 200, 0.4);
+}
